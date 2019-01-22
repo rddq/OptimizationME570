@@ -4,7 +4,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
     % ------------Starting point and bounds------------
     %var= Qw D d   %design variables
     x0 = [10,   0.2,    0.001]; %starting point
-    ub = [30000000,   0.5,    100000000]; %upper bound
+    ub = [300,   0.5,    0.01]; %upper bound
     lb = [0.000000001,  0.0000000001, 0.0005]; %lower bound
 
     % ------------Linear constraints------------
@@ -14,7 +14,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
     beq = [];
 
     % ------------Objective and Non-linear Constraints------------
-    function [f, constraints, ceq] = objcon(x)
+    function [func, constraints, ceq] = objcon(x)
         
         %Design Variables
         Qw=x(1); %ft^3/sec water flow rate
@@ -22,15 +22,15 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
         d=x(3); %ft - average limestone particle size after grinding
         
         %Analysis Variables
-        L = 15; %miles to feet - length of pipeline
+        gamma = 168.5; %lbm/ft3 - limestone density
+        L = 15*5280; %miles to ?feet - length of pipeline
         W = 12.67; %lbm/sec - flowrate of limestone
-        Ql=W; %ft^3/sec - flowrate of limestone
+        Ql=W/gamma; %ft^3/sec - flowrate of limestone
         a = 0.01; %ft. - average lump size of limestone before grinding
         g = 32.17; %ft/sec^2 - acceleration due to gravity
         gc = 32.17; % lbmft/lbfsec^2 - conversion between lbf and lbm 
         pw = 62.4; %lbm/ft3 - density of water 
         mew = 7.392*10^-4;%lbm/(ft-sec) - viscosity of water
-        gamma = 168.5; %lbm/ft3 - limestone density
        
         %Analysis Functions
         Area = pi*D^2/4; %ft^2 - cross sectional area of pipe
@@ -57,6 +57,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
         p = pw + c*(gamma-pw); % density of slurry lbm/ft^3
 
         f = fw*(pw/p+150*c*(pw/p)*((g*D*(S-1))/(V^2*sqrt(Cd)))^1.5);
+        
         Pg = 218*W*(1/sqrt(d)-1/sqrt(a)); %ftlbf/sec - Power for grinding
         GrindingPowerHP = Pg/550;
 
@@ -67,7 +68,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
         Vc = (40*g*c*(S-1)*D/sqrt(Cd))^0.5;
         mdot = p*Area*V;
 
-        PlantOperationHoursPerYear = 8*300; %hours
+        PlantOperationHoursPerYear = 8*300; %hours per year
         CostOfEnergy = 0.07; %cost per horsepowerhour
         InitialCostGrinder = GrindingPowerHP*300;
         InitialCostPump = PumpingPowerHP*200;
@@ -78,16 +79,14 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
         NetPresentCost = InitialCost+(CostPerYear*((1+i)^n-1)/(i*(1+i)^n));        
         
         %objective function
-        f = NetPresentCost; %minimize cost
+        func = NetPresentCost; %minimize cost
         
         %inequality constraints (c<=0)
         constraints = zeros(6,1);         % create column vector
-        constraints(1) = D-0.5; %Pipe diameter should not exceed six inches
-        constraints(2) = 1.1*Vc-V; %V > 1.1 VC
-        constraints(3) = c-0.4; %concentration of limestone less than 0.4
-        constraints(4) = 0.0005 - d; %d is greater than 0.0005
-        constraints(5) = 2.4 - CdRp2; % CdRp2 is greater than 2.4
-        constraints(6) = CdRp2 - 9600000; % CdRp2 is less than 9600000
+        constraints(1) = 1.1*Vc-V; %V > 1.1 VC
+        constraints(2) = c-0.4; %concentration of limestone less than 0.4
+        constraints(3) = 2.4 - CdRp2; % CdRp2 is greater than 2.4
+        constraints(4) = CdRp2 - 9600000; % CdRp2 is less than 9600000
         
         %equality constraints (ceq=0)
         ceq = [];
