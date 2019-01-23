@@ -5,7 +5,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
     %var= Qw D d   %design variables
     x0 = [10,   0.2,    0.001]; %starting point
     ub = [300,   0.5,    0.01]; %upper bound
-    lb = [0.000000001,  0.0000000001, 0.0005]; %lower bound
+    lb = [0.000000001,  0.0000000001, 0.00001]; %lower bound
 
     % ------------Linear constraints------------
     A = [];
@@ -23,9 +23,8 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
         
         %Analysis Variables
         gamma = 168.5; %lbm/ft3 - limestone density
-        L = 15*5280; %miles to ?feet - length of pipeline
-        W = 12.67; %lbm/sec - flowrate of limestone
-        Ql=W/gamma; %ft^3/sec - flowrate of limestone
+        L = 15*5280; %feet - length of pipeline
+        W = 12.67; %lbm/sec - mass flowrate of limestone
         a = 0.01; %ft. - average lump size of limestone before grinding
         g = 32.17; %ft/sec^2 - acceleration due to gravity
         gc = 32.17; % lbmft/lbfsec^2 - conversion between lbf and lbm 
@@ -34,6 +33,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
        
         %Analysis Functions
         Area = pi*D^2/4; %ft^2 - cross sectional area of pipe
+        Ql = W/gamma; %ft^3/sec - flowrate of limestone
         Q = Ql+Qw; %ft^3/sec - total slurry flow rate
         V = Q/Area; %ft/sec - average flow velocity
         c = Ql/(Q); % volumetric concentration of slurry
@@ -66,7 +66,6 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
         PumpingPowerHP = Pf/550;
         
         Vc = (40*g*c*(S-1)*D/sqrt(Cd))^0.5;
-        mdot = p*Area*V;
 
         PlantOperationHoursPerYear = 8*300; %hours per year
         CostOfEnergy = 0.07; %cost per horsepowerhour
