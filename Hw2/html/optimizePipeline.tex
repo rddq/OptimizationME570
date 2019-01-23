@@ -1,0 +1,235 @@
+
+% This LaTeX was auto-generated from MATLAB code.
+% To make changes, update the MATLAB code and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    \begin{verbatim}
+function [xopt, fopt, exitflag, output] = optimizePipeline()
+
+
+    % ------------Starting point and bounds------------
+    %var= Qw D d   %design variables
+    x0 = [10,   0.2,    0.001]; %starting point
+    ub = [300,   0.5,    0.01]; %upper bound
+    lb = [0.000000001,  0.0000000001, 0.0005]; %lower bound
+
+    % ------------Linear constraints------------
+    A = [];
+    b = [];
+    Aeq = [];
+    beq = [];
+
+    % ------------Objective and Non-linear Constraints------------
+    function [func, constraints, ceq] = objcon(x)
+
+        %Design Variables
+        Qw=x(1); %ft^3/sec water flow rate
+        D=x(2); %ft - internal diameter of pipe
+        d=x(3); %ft - average limestone particle size after grinding
+
+        %Analysis Variables
+        gamma = 168.5; %lbm/ft3 - limestone density
+        L = 15*5280; %feet - length of pipeline
+        W = 12.67; %lbm/sec - mass flowrate of limestone
+        a = 0.01; %ft. - average lump size of limestone before grinding
+        g = 32.17; %ft/sec^2 - acceleration due to gravity
+        gc = 32.17; % lbmft/lbfsec^2 - conversion between lbf and lbm
+        pw = 62.4; %lbm/ft3 - density of water
+        mew = 7.392*10^-4;%lbm/(ft-sec) - viscosity of water
+
+        %Analysis Functions
+        Area = pi*D^2/4; %ft^2 - cross sectional area of pipe
+        Ql = W/gamma; %ft^3/sec - flowrate of limestone
+        Q = Ql+Qw; %ft^3/sec - total slurry flow rate
+        V = Q/Area; %ft/sec - average flow velocity
+        c = Ql/(Q); % volumetric concentration of slurry
+        S=gamma/pw; % specific gravity of the limestone
+
+        Rw = (pw*V*D)/mew;
+        if Rw<10^5
+        fw = 0.3164/Rw^0.25; % friction factor of water
+        else
+        fw = 0.0032+0.221*Rw^-0.237; % friction factor of water
+        end
+        CdRp2 = 4*g*pw*d^3*((gamma-pw)/(3*mew^2));
+        % Curve fit is from JMP 14.
+        a1 = 0.421534;
+        b1= 104.95427;
+        h1 = 0.5679997;
+        d1 = 508.55715;
+        f1 = 1.2131968;
+        Cd = a1+b1*exp(-h1*log(CdRp2))+d1*exp(-f1*log(CdRp2));% average drag coefficient of the particles
+
+        p = pw + c*(gamma-pw); % density of slurry lbm/ft^3
+
+        f = fw*(pw/p+150*c*(pw/p)*((g*D*(S-1))/(V^2*sqrt(Cd)))^1.5);
+
+        Pg = 218*W*(1/sqrt(d)-1/sqrt(a)); %ftlbf/sec - Power for grinding
+        GrindingPowerHP = Pg/550;
+
+        changep = f*p*L*V^2/(D*2*gc);
+        Pf = changep*Q; %ft-lbf/sec - Friction power loss
+        PumpingPowerHP = Pf/550;
+
+        Vc = (40*g*c*(S-1)*D/sqrt(Cd))^0.5;
+
+        PlantOperationHoursPerYear = 8*300; %hours per year
+        CostOfEnergy = 0.07; %cost per horsepowerhour
+        InitialCostGrinder = GrindingPowerHP*300;
+        InitialCostPump = PumpingPowerHP*200;
+        CostPerYear = PlantOperationHoursPerYear*(PumpingPowerHP+GrindingPowerHP)*CostOfEnergy;
+        InitialCost = InitialCostGrinder+InitialCostPump;
+        i = 0.07;
+        n = 7;
+        NetPresentCost = InitialCost+(CostPerYear*((1+i)^n-1)/(i*(1+i)^n));
+
+        %objective function
+        func = NetPresentCost; %minimize cost
+
+        %inequality constraints (c<=0)
+        constraints = zeros(6,1);         % create column vector
+        constraints(1) = 1.1*Vc-V; %V > 1.1 VC
+        constraints(2) = c-0.4; %concentration of limestone less than 0.4
+        constraints(3) = 2.4 - CdRp2; % CdRp2 is greater than 2.4
+        constraints(4) = CdRp2 - 9600000; % CdRp2 is less than 9600000
+
+        %equality constraints (ceq=0)
+        ceq = [];
+
+    end
+
+
+    % ------------Call fmincon------------
+    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on');
+    [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
+    xopt %design variables at the minimum
+    fopt %objective function value at the minumum  fopt = f(xopt)
+    objcon(xopt)
+
+    % ------------Separate obj/con (do not change)------------
+    function [f] = obj(x)
+        [f, ~, ~] = objcon(x);
+    end
+    function [constraints, ceq] = con(x)
+        [~, constraints, ceq] = objcon(x);
+    end
+end
+\end{verbatim}
+
+        \color{lightgray} \begin{verbatim}
+____________________________________________________________
+   Diagnostic Information
+
+Number of variables: 3
+
+Functions 
+Objective:                            optimizePipeline/obj
+Gradient:                             finite-differencing
+Hessian:                              finite-differencing (or Quasi-Newton)
+Nonlinear constraints:                optimizePipeline/con
+Nonlinear constraints gradient:       finite-differencing
+
+Constraints
+Number of nonlinear inequality constraints: 6
+Number of nonlinear equality constraints:   0
+ 
+Number of linear inequality constraints:    0
+Number of linear equality constraints:      0
+Number of lower bound constraints:          3
+Number of upper bound constraints:          3
+
+Algorithm selected
+   interior-point
+
+
+____________________________________________________________
+   End diagnostic information
+                                            First-order      Norm of
+ Iter F-count            f(x)  Feasibility   optimality         step
+    0       4    7.042563e+09    0.000e+00    3.197e+10
+    1       8    6.243556e+05    2.006e-01    9.199e+09    9.950e+00
+    2      12    6.780855e+07    0.000e+00    1.019e+10    8.083e-01
+    3      16    1.149871e+07    0.000e+00    1.454e+09    2.755e-01
+    4      20    8.523203e+06    0.000e+00    2.400e+08    3.323e-01
+    5      25    3.785744e+06    0.000e+00    6.911e+08    1.633e+00
+    6      29    3.631230e+06    0.000e+00    7.977e+06    1.061e-01
+    7      33    3.630238e+06    0.000e+00    7.188e+06    4.458e-04
+    8      38    2.520926e+06    0.000e+00    3.823e+07    4.332e-01
+    9      43    6.995394e+05    0.000e+00    1.745e+08    1.356e+00
+   10      49    6.981749e+05    0.000e+00    1.743e+08    1.961e-03
+   11      54    6.959686e+05    0.000e+00    1.736e+08    3.236e-03
+   12      58    6.937797e+05    0.000e+00    1.718e+08    3.221e-03
+   13      62    6.937429e+05    0.000e+00    1.718e+08    6.955e-05
+   14      67    5.420589e+05    0.000e+00    1.745e+08    5.026e-01
+   15      71    5.399149e+05    0.000e+00    3.244e+07    1.146e-02
+   16      75    5.358135e+05    5.235e-03    2.316e+07    4.963e-02
+   17      79    5.161639e+05    1.201e-01    1.315e+06    2.176e-01
+   18      84    4.756269e+05    6.918e-01    5.905e+07    3.195e-01
+   19      88    4.157956e+05    5.532e+00    7.245e+07    3.353e-01
+   20      92    4.118547e+05    5.419e+00    5.445e+07    3.418e-03
+   21      96    4.118167e+05    5.418e+00    5.425e+07    2.613e-05
+   22     100    4.055795e+05    5.049e+00    1.666e+07    3.526e-03
+   23     104    4.055536e+05    5.047e+00    1.648e+07    1.803e-05
+   24     108    4.055473e+05    5.046e+00    1.645e+07    1.664e-06
+   25     112    4.055223e+05    5.045e+00    1.629e+07    1.567e-05
+   26     116    4.055097e+05    5.044e+00    1.621e+07    7.875e-06
+   27     120    4.055028e+05    5.043e+00    1.616e+07    4.272e-06
+   28     124    4.054757e+05    5.042e+00    1.598e+07    1.663e-05
+   29     128    4.054694e+05    5.040e+00    1.587e+07    2.556e-05
+   30     132    4.054498e+05    5.035e+00    1.560e+07    5.186e-05
+
+                                            First-order      Norm of
+ Iter F-count            f(x)  Feasibility   optimality         step
+   31     136    4.054078e+05    5.028e+00    1.514e+07    6.204e-05
+   32     140    4.089739e+05    2.352e+00    1.276e+08    2.903e-02
+   33     144    4.246856e+05    1.320e+00    9.182e+07    2.714e-02
+   34     148    4.447602e+05    3.923e-01    4.376e+07    4.191e-02
+   35     152    4.554415e+05    4.973e-02    7.297e+06    2.036e-02
+   36     156    4.569827e+05    9.713e-04    1.406e+05    2.619e-03
+   37     160    4.570128e+05    5.101e-06    2.430e+03    4.789e-05
+   38     164    4.570130e+05    2.380e-08    2.415e+00    2.456e-07
+
+Optimization completed: The relative first-order optimality measure, 4.582956e-08,
+is less than options.TolFun = 1.000000e-06, and the relative maximum constraint
+violation, 2.379926e-08, is less than options.TolCon = 1.000000e-06.
+
+Optimization Metric                                         Options
+relative first-order optimality =   4.58e-08       TolFun =   1e-06 (default)
+relative max(constraint violation) =   2.38e-08    TolCon =   1e-06 (default)
+
+
+xopt =
+
+    0.1128    0.1818    0.0005
+
+
+fopt =
+
+   4.5701e+05
+
+
+ans =
+
+   4.5701e+05
+
+
+ans =
+
+    0.1128    0.1818    0.0005
+
+\end{verbatim} \color{black}
+    
+
+
+\end{document}
+    
