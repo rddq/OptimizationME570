@@ -5,7 +5,7 @@ function [xopt, fopt, exitflag, output] = optimizePipeline()
     %var= Qw D d   %design variables
     x0 = [10,   0.2,    0.001]; %starting point
     ub = [300,   0.5,    0.01]; %upper bound
-    lb = [0.000000001,  0.0000000001, 0.00001]; %lower bound
+    lb = [0.000000001,  0.0000000001, 0.0005]; %lower bound
 
     % ------------Linear constraints------------
     A = [];
