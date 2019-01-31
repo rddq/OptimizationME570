@@ -48,8 +48,8 @@
      function [grad] = gradobj2(x)
         global ngrad
         %gradient for function 1
-        grad(1,1) = 2*x1 - 400*x1*(- x1^2 + x2) - 2;
-        grad(2,1) = - 200*x1^2 + 200*x2
+        grad(1,1) = 2*x(1) - 400*x(1)*(- x(1)^2 + x(2)) - 2;
+        grad(2,1) = - 200*x(1)^2 + 200*x(2)
         ngrad = ngrad + 1;
      end
      
