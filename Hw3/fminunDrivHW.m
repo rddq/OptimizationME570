@@ -16,7 +16,6 @@
     fopt
     nobj
     ngrad
-    
    
      % function to be minimized
      function [f] = obj1(x)
