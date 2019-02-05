@@ -1,4 +1,5 @@
-%---Example Driver program for fminun
+%---Example Driver program for fminun--%
+%---Author: Ryan Day--%
     clear;
 
     global nobj ngrad

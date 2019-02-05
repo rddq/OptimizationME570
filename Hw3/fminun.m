@@ -1,81 +1,81 @@
-
-     function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
-     
-        % get function and gradient at starting point
-        [n,~] = size(x0); % get number of variables
-        f = obj(x0);
-        grad = gradobj(x0);
-        x = x0;
+function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)     
+        %--- Initialize variables ---%
         
+        [n,~] = size(x0); 
+        stoptol = stoptol*ones(1,n);
+        
+        max_iterations = 2500;
+        max_line_search = 2500;
         alphaInitial = 0.5;
         
-        % set starting step length
+        x = x0;
+        f = obj(x);
         alpha = alphaInitial;
-        % steepest descent
-        s = getSdDirection(grad);          
+        grad = gradobj(x);
         
-        line_step = 0;
-        line_iteration = 0;
-        
+    for line_search_index = 1:max_line_search
+        if grad < stoptol
+            xopt = x;
+            fopt = f;
+            exitflag = 1;
+            break
+        end
+        if algoflag == 1
+            s = getSdDirection(grad);
+        else
+            s = getQNdirection(grad);
+        end       
         % Initialize history
         allf = [f];
         allx = [x];
-        alla = [0, alpha];
-        while true            
+        alla = [0];
+        %--- Search Line ---%
+        for iter_index = 1 : max_iterations
             % Take step in alpha direction
-            [fnew,xnew]= takeStep(x,alpha,s,obj);
-            allf = [allf, fnew];
-            allx = [allx, xnew];
-            line_iteration = line_iteration + 1;
-            if fnew < f
-                alpha = alpha*2;
-                alla = [alla alpha];
-                f = fnew;
-                x = xnew;
+            alla = [alla alpha];
+            [fnew,xnew]= takeStep(allx(1),alla(end),s,obj);
+            allf = [allf fnew];
+            allx = [allx xnew];
+            if fnew < allf(end-1)
+                alpha = alpha*2; 
             else
-                % Perform quadratic approximation and find minimum
-                if size(allf) == 2
-                   [fnew,xnew]= takeStep(x,alpha,s,obj);
-                   allf = [allf, fnew];
-                   allx = [allx, xnew];
-                end            
-                % Take alphas around minimum for quadratic approximation
-                amiddle = (alpha+alpha/2)/2;
-                [fmiddle,~] = takeStep(x,amiddle,s,obj);
-                alphas = [alla(end-2), alla(end-1), amiddle, alla(end)];
-                candidates = [allf(end-2), allf(end-1), fmiddle, allf(end)];
-                [~,min_index] = min(candidates);
+                break
+            end               
+        end 
+        alpha = quadraticFit(alla,allf,allx,s,obj);
+        %--- Set new variables for new search direction ---%
+        [f,x] = takeStep(x,alpha,s,obj);
+        grad = gradobj(x);        
+    end
+end
+        
+function [astar] = quadraticFit(alla,allf,allx,s,obj)
+    % Perform quadratic approximation and find minimum
+    [~,cols] = size(allf);
+    if cols == 2
+       [fnew,xnew]= takeStep(allx(1),alla(end),s,obj);
+       allf = [allf fnew];
+       allx = [allx xnew];
+    end            
+    % Take alphas around minimum for quadratic approximation    
+    amiddle = (alla(end)+alla(end-1))/2;
+    [fmiddle,~] = takeStep(allx(end),amiddle,s,obj);
+    alphas = [alla(end-2), alla(end-1), amiddle, alla(end)];
+    candidates = [allf(end-2), allf(end-1), fmiddle, allf(end)];
+    [~,min_index] = min(candidates);
 
-                a = alphas([min_index-1 min_index min_index+1]);
-                fn = candidates([min_index-1 min_index min_index+1]);
+    a = alphas([min_index-1 min_index min_index+1]);
+    fn = candidates([min_index-1 min_index min_index+1]);
 
-                % Calculate Alpha of minimum of the quadratic approximation
-                %[f,x] = takeStep(x,astar,s,obj);
-                num = fn(1)*(a(2)^2-a(3)^2)+fn(2)*(a(3)^2-a(1)^2)+fn(3)*(a(1)^2-a(2)^2);
-                den = 2*(fn(1)*(a(2)-a(3))+fn(2)*(a(3)-a(1))+fn(3)*(a(1)-a(2)));
-                astar = num/den;
-                % set new variables for new search direction
-                [f,x] = takeStep(x,astar,s,obj);
-                alpha = alphaInitial;
-                grad = gradobj(x);
-                s = getSdDirection(grad);
-                line_iteration
-                if s < stoptol
-                    line_step+1
-                    break
-                else
-                    allf = [f];
-                    allx = [x];
-                    alla = [0, alpha];
-                    line_step = line_step+1;
-                end
-            end
-        end        
-        xopt = x;
-        fopt = f;
-        exitflag = 0;
+    % Calculate Alpha of minimum of the quadratic approximation
+    num = fn(1)*(a(2)^2-a(3)^2)+fn(2)*(a(3)^2-a(1)^2)+fn(3)*(a(1)^2-a(2)^2);
+    den = 2*(fn(1)*(a(2)-a(3))+fn(2)*(a(3)-a(1))+fn(3)*(a(1)-a(2)));
+    astar = num/den; 
+end        
+    
+     function [s] = getQNdirection(grad)
+        s=0;
      end
-     
      % get steepest descent search direction as a column vector
      function [s] = getSdDirection(grad) 
         mag = sqrt(grad'*grad);
@@ -86,4 +86,7 @@
         xnew = x + alpha*s;
         fnew = obj(xnew);
      end
+
+
+    
      
