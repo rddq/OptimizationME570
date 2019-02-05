@@ -53,12 +53,16 @@ function [astar] = quadraticFit(alla,allf,allx,s,obj)
     % Perform quadratic approximation and find minimum
     [~,cols] = size(allf);
     if cols == 2
-       [fnew,xnew]= takeStep(allx(1),alla(end),s,obj);
-       allf = [allf fnew];
-       allx = [allx xnew];
+       % Find a value that is less than the original point
+       while true
+           alphaExtra = (alla(end)+alla(end-1))/2
+           [fnew,xnew]= takeStep(allx(1),alphaExtra,s,obj);
+           if fnew <
+       end
+    else
+       amiddle = (alla(end)+alla(end-1))/2;
     end            
     % Take alphas around minimum for quadratic approximation    
-    amiddle = (alla(end)+alla(end-1))/2;
     [fmiddle,~] = takeStep(allx(end),amiddle,s,obj);
     alphas = [alla(end-2), alla(end-1), amiddle, alla(end)];
     candidates = [allf(end-2), allf(end-1), fmiddle, allf(end)];
