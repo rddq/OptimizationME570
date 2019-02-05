@@ -14,48 +14,58 @@
         % steepest descent
         s = getSdDirection(grad);          
         
+        line_step = 0;
         line_iteration = 0;
-        line_search = 0;
-        allf = [f];
         
-        while true
+        % Initialize history
+        allf = [f];
+        allx = [x];
+        alla = [0, alpha];
+        while true            
+            % Take step in alpha direction
             [fnew,xnew]= takeStep(x,alpha,s,obj);
-            append(allf, fnew)
+            allf = [allf, fnew];
+            allx = [allx, xnew];
+            line_iteration = line_iteration + 1;
             if fnew < f
                 alpha = alpha*2;
+                alla = [alla alpha];
                 f = fnew;
                 x = xnew;
-                line_search = line_search + 1  
             else
-            % Calculate Alpha Star 
-            a1 = alpha/2;
-            a3 = alpha;
-            a2 = (a1+a3)/2;
-            [fmiddle,~] = takeStep(x,a2,s,obj);
-            p = polyfit([a1,a2,a3],[f,fmiddle,fnew],2);
-            quadfita1 = polyval(p,a1);
-            quadfita2 = polyval(p,a2);
-            quadfita3 = polyval(p,a3);
-%             d1p = polyder(p);                           % First Derivative
-%             d2p = polyder(d1p);                         % Second Derivative
-%             ips = roots(d1p);                           % Inflection Points
-%             afinal = polyval(d2p, ips);                    % Evaluate ‘d2p’ at ‘ips’            
-
-            num = quadfita1*(a2^2-a3^3)+quadfita2*(a3^2-a1^2)+quadfita3*(a1^2-a2^2);
-            den = 2*(quadfita1*(a2-a3)+quadfita2*(a3-a1)+quadfita3*(a1-a2));
+            % Perform quadratic approximation and find minimum
+            if size(allf) == 2
+               [fnew,xnew]= takeStep(x,alpha,s,obj);
+               allf = [allf, fnew];
+               allx = [allx, xnew];
+            end            
+            % Take alphas around minimum for quadratic approximation
+            amiddle = (alpha+alpha/2)/2;
+            [fmiddle,~] = takeStep(x,amiddle,s,obj);
+            alphas = [alla(end-2), alla(end-1), amiddle, alla(end)];
+            candidates = [allf(end-2), allf(end-1), fmiddle, allf(end)];
+            [~,min_index] = min(candidates);
+            
+            a = alphas([min_index-1 min_index min_index+1]);
+            f = candidates([min_index-1 min_index min_index+1]);
+            
+            % Calculate Alpha of minimum of the quadratic approximation
+            [f,x] = takeStep(x,astar,s,obj);
+            num = f(1)*(a(2)^2-a(3)^3)+f(2)*(a(3)^2-a(1)^2)+f(3)*(a(1)^2-a(2)^2);
+            den = 2*(f(1)*(a(2)-a(3))+f(2)*(a(3)-a(1))+f(3)*(a(1)-a(2)));
             astar = num/den;
             % set new variables for new search direction
             [f,x] = takeStep(x,astar,s,obj);
             alpha = alphaInitial;
             grad = gradobj(x);
             s = getSdDirection(grad);
+            line_iteration
             if s < stoptol
+                line_step+1
                 break
             else
-                line_iteration = line_iteration+1
+                line_step = line_step+1;
             end
-%             
-%             
             end
         end        
         xopt = x;
