@@ -1,6 +1,5 @@
 function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)     
-        %--- Initialize variables ---%
-        
+        %--- Set constants ---%
         [n,~] = size(x0); 
         stoptol = stoptol*ones(1,n);
         
@@ -8,6 +7,7 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
         max_line_search = 2500;
         alphaInitial = 0.5;
         
+        %--- Initialize variables ---%      
         x = x0;
         f = obj(x);
         alpha = alphaInitial;
@@ -38,30 +38,39 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
             allx = [allx xnew];
             if fnew < allf(end-1)
                 alpha = alpha*2; 
+            elseif iter_index == 1
+              alpha = alpha/2
             else
                 break
             end               
         end 
-        alpha = quadraticFit(alla,allf,allx,s,obj);
+        alpha = quadraticFit(alla,allf,allx,s,obj,n);
         %--- Set new variables for new search direction ---%
-        [f,x] = takeStep(x,alpha,s,obj);
+        [f,x] = takeStep(allx(1),alpha,s,obj);
         grad = gradobj(x);        
     end
 end
         
-function [astar] = quadraticFit(alla,allf,allx,s,obj)
+function [astar] = quadraticFit(alla,allf,allx,s,obj,n)
     % Perform quadratic approximation and find minimum
     [~,cols] = size(allf);
     if cols == 2
        % Find a value that is less than the original point
-       while true
-           alphaExtra = (alla(end)+alla(end-1))/2
+       alphaExtra = (alla(end)+alla(end-1))/2;
+       while true           
            [fnew,xnew]= takeStep(allx(1),alphaExtra,s,obj);
-           if fnew <
+           if fnew < allf(end)
+               alla = [alla(1:end-1) alphaExtra, alla(end)];
+               allf = [allf(1:end-1) fnew, allf(end)];
+               allx = [allx(n,1:end-1) xnew, allx(n,end)];
+               break
+           else
+               alphaExtra = alphaExtra/2;
+           end           
        end
     else
-       amiddle = (alla(end)+alla(end-1))/2;
-    end            
+    end    
+    amiddle = (alla(end)+alla(end-1))/2;
     % Take alphas around minimum for quadratic approximation    
     [fmiddle,~] = takeStep(allx(end),amiddle,s,obj);
     alphas = [alla(end-2), alla(end-1), amiddle, alla(end)];
