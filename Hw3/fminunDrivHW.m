@@ -6,7 +6,9 @@
     nobj = 0; % counter for objective evaluations
     ngrad = 0.; % counter for gradient evaluations
     
+    algoflag = 1; % 1=steepest descent; 2=BFGS quasi-Newton
     problem = 2;
+    stoptol = 1.e-3; % stopping tolerance, all gradient elements must be < stoptol  
     
     x0_1 = [10; 10; 10]; % starting points, set to be column vector
     x0_2 = [-1.5; 1];
@@ -20,11 +22,7 @@
         x0 = x0_2;
         obj = @obj2;
         gradobj = @gradobj2;
-    end
-       
-    algoflag = 1; % 1=steepest descent; 2=BFGS quasi-Newton
-    stoptol = 1.e-3; % stopping tolerance, all gradient elements must be < stoptol  
-        
+    end      
     % ---------- call fminun----------------
     [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag);
    
