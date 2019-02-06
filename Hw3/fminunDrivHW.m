@@ -6,22 +6,34 @@
     nobj = 0; % counter for objective evaluations
     ngrad = 0.; % counter for gradient evaluations
     
+    problem = 2;
     
-    x0_1 = [10; 10; 10]; % starting point, set to be column vector
+    x0_1 = [10; 10; 10]; % starting points, set to be column vector
     x0_2 = [-1.5; 1];
+    if problem == 1
+        % quadratic function
+        x0 = x0_1;
+        obj = @obj1;
+        gradobj = @gradobj1;
+    elseif problem == 2
+        % rosenbrock function
+        x0 = x0_2;
+        obj = @obj2;
+        gradobj = @gradobj2;
+    end
+       
     algoflag = 1; % 1=steepest descent; 2=BFGS quasi-Newton
     stoptol = 1.e-3; % stopping tolerance, all gradient elements must be < stoptol  
-    
-    
+        
     % ---------- call fminun----------------
-    [xopt, fopt, exitflag] = fminun(@obj2, @gradobj2, x0_2, stoptol, algoflag);
+    [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag);
    
     xopt
     fopt
     nobj
     ngrad
    
-     % function to be minimized
+     % Quadratic function to be minimized
      function [f] = obj1(x)
         global nobj
         %example function
@@ -39,7 +51,7 @@
         ngrad = ngrad + 1;
      end
      
-     % function to be minimized
+     % Rosenbrock function to be minimized
      function [f] = obj2(x)
         global nobj
         %example function
