@@ -8,6 +8,7 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
     global f_a_nobj_history
     global x_history
     global s_history
+    %--- Set initial variables ---%
     allx = [];
     allf = [];
     alla = [];
@@ -88,6 +89,7 @@ function [a,fn] = searchLine(x0,f,s,obj,alpha)
     else
         error('second point started higher')
     end
+    % Go one step back and return those four points
     amiddle = a(end)*0.75;
     fmiddle = obj(x0+amiddle*s);
     a = [a((end-2):end-1),amiddle,a(end)];
