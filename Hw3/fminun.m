@@ -4,15 +4,31 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
     stoptol_vector = stoptol*ones(1,n);
     alphaInitial = 0.00005;
     firstflag = 1;
+    %--- Set globals ---%
+    global f_a_nobj_history
+    global x_history
+    global s_history
+    allx = [];
+    allf = [];
+    alla = [];
+    alls = [];
+    nobjlocal = [];
+    N = eye(n);
     %--- Update Direction ---%
     [xopt, fopt, exitflag] = updateDirection(obj, gradobj, x0,... 
     stoptol_vector, algoflag, alphaInitial,...
-    eye(n), x0, 0, firstflag);          
+    N, x0, 0, firstflag, allx, allf, alla, alls, nobjlocal);
+    f_a_nobj_history;
+    x_history;
+    s_history;
 end
     
 function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
-    stoptol_vector, algoflag, alphaInitial, N, xprev, gradprev, firstflag)
+    stoptol_vector, algoflag, alphaInitial, N, xprev, gradprev, firstflag,... 
+    allx, allf, alla, alls, nobjlocal)
     %--- Initialize variables ---%      
+    global nobj
+    nobj_init = nobj;
     f = obj(x0);
     alpha = alphaInitial;
     grad = gradobj(x0);
@@ -21,10 +37,15 @@ function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
         xopt = x0;
         fopt = f;
         exitflag = 0;
+        global f_a_nobj_history
+        global x_history
+        global s_history
+        f_a_nobj_history = [allf;alla;nobjlocal];
+        x_history = allx;
+        s_history = alls;
         return
     else
-    %--- Check if obj has been called too many times ---%    
-    global nobj
+    %--- Check if nobj has been called too many times ---%    
     if nobj > 1000
         exitflag = 1;
         xopt = 'algorithm called obj more than 1000 times';
@@ -42,14 +63,20 @@ function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
         else
         [s,N] = getQNdirection(grad,N,grad-gradprev,x0-xprev);
         end
-    end         
+    end    
     %--- Do a line search in new direction ---%
     [a4,fn4] = searchLine(x0,f,s,obj,alpha);
     [a3,fn3] = takeBestThreePoints(a4,fn4);
-    alpha = quadraticFit(a3,fn3);         
+    alpha = quadraticFit(a3,fn3);
+    %--- Record variable history ---%
+    allx = [allx x0];
+    allf = [allf f];
+    alls = [alls s];
+    alla = [alla alpha];
+    nobjlocal = [nobjlocal (nobj-nobj_init)];
     %--- Set new variables for new search direction ---%
     xnew = x0 + alpha*s;
-    [xopt, fopt, exitflag] = updateDirection(obj, gradobj, xnew, stoptol_vector, algoflag, alphaInitial, N,x0,grad,firstflag);
+    [xopt, fopt, exitflag] = updateDirection(obj, gradobj, xnew, stoptol_vector, algoflag, alphaInitial, N,x0,grad,firstflag,allx,allf,alla,alls,nobjlocal);
     end     
 end
        
