@@ -7,11 +7,14 @@
     ngrad = 0.; % counter for gradient evaluations
     
     algoflag = 1; % 1=steepest descent; 2=BFGS quasi-Newton
-    problem = 2;
+    problem = 1;
     stoptol = 1.e-3; % stopping tolerance, all gradient elements must be < stoptol  
     
-    x0_1 = [10; 10; 10]; % starting points, set to be column vector
-    x0_2 = [-1.5; 1];
+    x0_1_starting_points = [[10;10;10] [2;7;9] [100;100;100] [15;9;30]];
+    x0_1 = x0_1_starting_points(:,1); % starting points, set to be column vector
+    x0_2_starting_points = [[-1.5; 1] [-3; 1.8]];
+    x0_2 = x0_2_starting_points(1);
+    
     if problem == 1
         % quadratic function
         x0 = x0_1;
