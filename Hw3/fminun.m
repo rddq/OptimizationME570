@@ -19,6 +19,7 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
     [xopt, fopt, exitflag] = updateDirection(obj, gradobj, x0,... 
     stoptol_vector, algoflag, alphaInitial,...
     N, x0, 0, firstflag, allx, allf, alla, alls, nobjlocal);
+%   Plot Rosenbrock contour plot
 %     if algoflag == 1
 %         ContourPlotRosenbrock(x_history(:,1:100))
 %     else
