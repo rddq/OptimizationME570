@@ -6,7 +6,7 @@
     nobj = 0; % counter for objective evaluations
     ngrad = 0.; % counter for gradient evaluations
     
-    algoflag = 1; % 1=steepest descent; 2=BFGS quasi-Newton
+    algoflag = 2; % 1=steepest descent; 2=BFGS quasi-Newton
     problem = 2;
     stoptol = 1.e-3; % stopping tolerance, all gradient elements must be < stoptol  
     

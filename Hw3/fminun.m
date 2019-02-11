@@ -19,9 +19,12 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
     [xopt, fopt, exitflag] = updateDirection(obj, gradobj, x0,... 
     stoptol_vector, algoflag, alphaInitial,...
     N, x0, 0, firstflag, allx, allf, alla, alls, nobjlocal);
-    f_a_nobj_history;
-    x_history;
-    s_history;
+%     if algoflag == 1
+%         ContourPlotRosenbrock(x_history(:,1:100))
+%     else
+%         % Show all steps
+%         ContourPlotRosenbrock(x_history)
+%     end
 end
     
 function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
