@@ -2,7 +2,7 @@ function [xopt, fopt, exitflag] = fminun(obj, gradobj, x0, stoptol, algoflag)
     %--- Set constants ---%
     [n,~] = size(x0); 
     stoptol_vector = stoptol*ones(1,n);
-    alphaInitial = 0.00005;
+    alphaInitial = 0.7;
     firstflag = 1;
     %--- Set globals ---%
     global f_a_nobj_history
@@ -29,7 +29,7 @@ function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
     allx, allf, alla, alls, nobjlocal)
     %--- Initialize variables ---%      
     global nobj
-    nobj_init = nobj;
+    nobj_at_start = nobj;
     f = obj(x0);
     alpha = alphaInitial;
     grad = gradobj(x0);
@@ -47,16 +47,16 @@ function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
         return
     else
     %--- Check if nobj has been called too many times ---%    
-    if nobj > 1000
-        exitflag = 1;
-        xopt = 'algorithm called obj more than 1000 times';
-        fopt = 'algorithm called obj more than 1000 times';
-        return
-    end
+%     if nobj > 1000
+%         exitflag = 1;
+%         xopt = 'algorithm called obj more than 1000 times';
+%         fopt = 'algorithm called obj more than 1000 times';
+%         return
+%     end
     %--- Update search direction --- %
     if algoflag == 1
         s = getSdDirection(grad);
-    else 
+    elseif algoflag == 2
         % First iteration of quasi-newton method runs as steepest descent
         if firstflag == 1
         s = getSdDirection(grad);
@@ -64,6 +64,8 @@ function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
         else
         [s,N] = getQNdirection(grad,N,grad-gradprev,x0-xprev);
         end
+    else
+        error('algorithm not defined')
     end    
     %--- Do a line search in new direction ---%
     [a4,fn4] = searchLine(x0,f,s,obj,alpha);
@@ -74,7 +76,7 @@ function [xopt,fopt,exitflag] = updateDirection(obj, gradobj, x0,...
     allf = [allf f];
     alls = [alls s];
     alla = [alla alpha];
-    nobjlocal = [nobjlocal (nobj-nobj_init)];
+    nobjlocal = [nobjlocal (nobj-nobj_at_start)];
     %--- Set new variables for new search direction ---%
     xnew = x0 + alpha*s;
     [xopt, fopt, exitflag] = updateDirection(obj, gradobj, xnew, stoptol_vector, algoflag, alphaInitial, N,x0,grad,firstflag,allx,allf,alla,alls,nobjlocal);
@@ -87,7 +89,9 @@ function [a,fn] = searchLine(x0,f,s,obj,alpha)
     if fnew < f
        [a,fn] = searchLineHelper(x0,fnew,s,obj,alpha*2,[0, alpha],[f,fnew]);
     else
-        error('second point started higher')
+        % If the step was too far, try again with a smaller alpha
+        [a,fn] = searchLine(x0,f,s,obj,alpha/100);
+        return
     end
     % Go one step back and return those four points
     amiddle = a(end)*0.75;
