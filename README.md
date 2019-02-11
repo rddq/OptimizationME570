@@ -1,2 +1,2 @@
 # OptimizationME575
-Repo for the homework and projects of ME570 at BYU in MATLAB
+Repo for the homework and projects of ME575 at BYU in MATLAB
