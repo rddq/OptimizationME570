@@ -37,7 +37,6 @@
      % Quadratic function to be minimized
      function [f] = obj1(x)
         global nobj
-        %example function
         f = 20+3*x(1)-6*x(2)+8*x(3)+6*x(1)^2-(2*x(1)*x(2))-(x(1)*x(3))+x(2)^2+0.5*x(3)^2;
         nobj = nobj +1;
      end
@@ -55,7 +54,6 @@
      % Rosenbrock function to be minimized
      function [f] = obj2(x)
         global nobj
-        %example function
         f = 100*(x(2)-x(1)^2)^2+(1-x(1))^2;
         nobj = nobj +1;
      end
