@@ -1,11 +1,10 @@
 function [xopt, fopt, exitflag, output] = OptimizeTruss()
 
-
     % ------------Starting point and bounds------------
-    %var= H  d   %design variables
-    x0 = [10, 3]; %starting point
-    ub = [50, 5]; %upper bound
-    lb = [5,  1]; %lower bound
+    %var= L1,3,4,5,6 theta1,2,3,4,5,6,7,8,9   %design variables
+    x0 = [30,30,30,1,1,0.5,0.5,0.01]; %starting point
+    ub = [90,90,90,3,3,3,3,0.001]; %upper bound
+    lb = [5,5,5,0.1,0.1,0.1,0.1,0.5]; %lower bound
 
     % ------------Linear constraints------------
     A = [];
@@ -20,37 +19,53 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         Sy = 220;
         % Ultimate Tensile Strength - MPa
         Sut = 341;       
-        L2 = 1; %m
-        Force1 = 1000; %N
-        Force2 = 1500; %N
+                
+        F1 = 1000; %N
+        F2 = 1500; %N
         phiF1 = 90; %degrees
         phiF2 = 90; %degrees
-             
-        % Design Variables
-        % Length in meters
-        L1
-        L3
-        L4
-        L5
-        L6
+
+        % Design Variables                
         % Angle in degrees
-        theta1
-        theta2
-        theta3
-        theta4
-        theta5
-        theta6
-        theta7
-        theta8
-        theta9
-           
+        theta1 = x(1);
+        theta4 = x(2);       
+        theta8 = x(3); 
+        
+        % Length in meters
+        L1 = x(4);
+        L2 = x(5);
+        L6 = x(6);
+        L7 = x(7);
+        
+        % base and height length
+        bh = x(8);
+        
         %---Design Functions---%
+
+        % Calculate other truss dimensions
+        L3 = lawCosinesLength(L1,L6,theta1);
+        L4 = lawCosinesLength(L2,L3,theta4);
+        L5 = lawCosinesLength(L4,L7,theta8); 
+        theta2 = lawCosinesAngle(L6,L1,L3);
+        theta3 = 180-theta1-theta2;
+        theta5 = lawCosinesAngle(L2,L3,L4);
+        theta6 = 180-theta4-theta5;
+        theta7 = lawCosinesAngle(L7,L4,L5);
+        theta9 = 180-theta8-theta7;
+        
+        function a = lawCosinesLength(b,c,A)
+            a = sqrt(b^2+c^2-2*b.*c*cos(A));
+        end
+        function angle = lawCosinesAngle(A,b,c)
+            angle = acos((-A^2+b^2+c^2)/(2*b*c));
+        end
+        
         % Reaction Forces
         Rx = -(F1*cos(phiF1)+F2*cos(phiF2));
         Qy = F1*sin(phiF1)*L1*cos(theta1)+F2*sin(phiF2)*(L6-L5*cos(theta9));
         Ry = F1+F2-Qy;
 
-        Ax = [-cos(theta1) 1 cos(theta3) 0 0 0 0 ];
+        Ax = [-cos(theta1), 1, cos(theta3), 0, 0, 0, 0 ];
         Ay = [sin(theta1) 0 sin(theta3) 0 0 0 0 ];
         Bx = [0 -1 0 -cos(theta6) cos(theta9) 0 0 ];
         By = [0 0 0 -sin(theta6) -sin(theta9) 0 0 ];
@@ -63,12 +78,12 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
 
         A_mat = [Ax;Ay;Bx;By;Cx;Cy;Dx;Dy;Ex;Ey];
         b_mat = [-F1*cos(phiF1); F1*sin(phiF1); -F2*cos(phiF2); F2*sin(phiF2); -Rx; -Ry; 0; 0; 0; -Qy];
-        xForces = b_mat/A_mat;
+        xForces = mldivide(A_mat,b_mat);
         
         % Convert these Forces into stress
         
         % Tensile condition
-        if F/Area > 0
+            if F/Area > 0
             F/Area < Sut/1.5;
         end
 
