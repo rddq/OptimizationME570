@@ -83,6 +83,6 @@ L6>L2;
 NodeC = [0,0];
 NodeA = [L1*cos(theta1),L1*sin(theta1)];
 NodeB = [NodeA(1)+L2,NodeA(2)];
-NodeE = [L6,0];
-NodeD = [L6/2,0];
+NodeE = [L6+L7,0];
+NodeD = [L6,0];
 
