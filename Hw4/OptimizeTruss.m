@@ -16,6 +16,7 @@
     % ------------Call fmincon------------
   
     options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on');
+    %'SpecifyObjectiveGradient',true
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);  
    
     xopt    %design variables at the minimum
@@ -38,7 +39,9 @@
 
         % call Truss to get weight and stresses
         [weight,stress] = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, Elem);
-
+        
+        %grad = gradCentral(Elem(:,3),@Truss,0.0001,Data);
+        
         %objective function
         f = weight; %minimize weight
         
@@ -61,3 +64,37 @@
     function [c, ceq] = con(x) 
         [~, c, ceq] = objcon(x);
     end
+    
+function [grad] = gradCentral(x,Truss,h,Data)
+    n = size(x);
+    grad = zeros(n,1);
+    for i=1:n
+        ElemF = Elem;
+        ElemB = Elem;
+        ElemF(i,3) = x(i) + h;
+        f_forward = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemF);
+        ElemB(i,3) = x(i) - h;
+        f_backward = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemB);
+        grad(i) = (f_forward-f_backward)/(2*h);
+    end
+end
+function [grad] = gradForward(x,Truss,fb,h)
+    n = size(x);
+    grad = zeros(n,1);
+    for i=1:n
+        ElemF = Elem;
+        ElemF(i,3) = x(i) + h;
+        f_forward = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemF);
+        grad(i) = (fun(xF)-fb)/h;
+    end
+end
+function grad = gradImag(x,Truss,fb,h)
+    n = size(x);
+    grad = zeros(n,1);
+    for index=1:n
+        ElemI = complex(Elem);
+        ElemI(index,3) = x(index) + 1i*h;
+        f_im = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemI);
+        grad(index) = imag(f_im)/h;
+    end
+end
