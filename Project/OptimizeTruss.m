@@ -1,7 +1,8 @@
 function [xopt, fopt, exitflag, output] = OptimizeTruss()
 
     % ------------Starting point and bounds------------
-       
+    clear
+    clf
     % Set mins and maxes
     theta_min = 45;
     theta_max = 85;
@@ -36,7 +37,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         L7 = x(5);       
              
         %---Constants---%
-        % Area of cross section of beam
+        % Area of cross section of beam m^2
         Area = 0.15^2*pi;
         
         % Annealed 1018 steel
@@ -48,7 +49,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         density = 7850;
         
         FactorOfSafety = 1.5;
-                        
+              
         F1 = 10000; %N
         F2 = 15000; %N
         phiF1 = 90; %degrees
@@ -68,19 +69,17 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         f = weight; % minimize weight
                 
         %---Inequality constraints (c<=0)---%
-        
-        % Create constraints for members        
-        % initialize column vector 
+        % initialize constraint column vector 
         [numberOfMembers,~] = size(all_member_stress);
-        c = zeros(numberOfMembers*2,1); 
+        c = zeros(numberOfMembers*2+16+3,1); 
         
         maxCompressiveForce = Sy/(FactorOfSafety);
         maxTensionForce = Sut/(FactorOfSafety);
-        % Create constraint for each member
-        for index = 1:size(numberOfMembers)
+        % Create min and max constraint for each member
+        for index = 1:numberOfMembers
             c(2*index-1) = all_member_stress(index)-maxCompressiveForce;
             c(2*index) = -Sut/maxTensionForce-all_member_stress(index);
-        end
+        end 
         
         % Create min and max constraint for each theta
         thetas = [theta2,theta3,theta5,theta6,theta7,theta9];
@@ -89,10 +88,12 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
             c(2*index+offset-1) = theta_min - thetas(index);
             c(2*index+offset) = thetas(index) - theta_max;
         end 
-        % Height >1, <2.5
-        c(76) = 1 - L1*(sind(theta1));
-        c(77) = L1*(sind(theta1)) - 2.5;
-        c(78) = L2-(L6+L7);
+        
+        % Height > 1, Height < 2.5 m
+        c(32) = 0.5 - L1*(sind(theta1));
+        c(33) = L1*(sind(theta1)) - 2.5;
+        % Bottom of the truss is bigger than top of the truss
+        c(34) = L2-(L6+L7);
         
         %equality constraints (ceq=0)
         ceq = [];
@@ -102,6 +103,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
     % ------------Call fmincon------------
     options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on');
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
+    [f, c, ceq] = objcon(xopt);
     xopt %design variables at the minimum
     fopt %objective function value at the minumum  fopt = f(xopt)
     plot_truss(xopt);
@@ -114,6 +116,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         [~, c, ceq] = objcon(x);
     end
 end
+
 function a = lawCosinesLength(b,c,A)
             a = sqrt(b^2+c^2-2*b*c*cosd(A));
 end
@@ -186,4 +189,3 @@ function memberForces = calculateForces(F1,phiF1,F2,phiF2,theta1,theta3,theta6,t
     b_mat = [-F1*cosd(phiF1); F1*sind(phiF1); -F2*cosd(phiF2); F2*sind(phiF2); -Rx; -Ry; 0; 0; 0; -Qy];
     memberForces = mldivide(A_mat,b_mat);
 end
-
