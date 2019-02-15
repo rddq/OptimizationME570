@@ -2,9 +2,9 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
 
     % ------------Starting point and bounds------------
     %var= L1,3,4,5,6 theta1,2,3,4,5,6,7,8,9   %design variables
-    x0 = [30,30,30,1,1,0.5,0.5,0.01]; %starting point
+    x0 = [30,30,30,500,500,500,500,20]; %starting point
     ub = [90,90,90,1000,1000,1000,1000,1000]; %upper bound
-    lb = [5,5,5,0.001,0.001,0.001,0.001,0.00000000000000000000000000001]; %lower bound
+    lb = [5,5,5,0.5,0.5,0.5,0.5,0.1]; %lower bound
 
     % ------------Linear constraints------------
     A = [];
@@ -42,10 +42,10 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         FOS = 1.5;
         
         % Degrees that angle of Forces will be shifted
-        angle_s = 2;
+        angle_s = 1;
                 
-        F1 = 100000; %N
-        F2 = 100000; %N
+        F1 = 10000000; %N
+        F2 = 10000000; %N
         phiF1 = 90; %degrees
         phiF2 = 90; %degrees
         
@@ -102,8 +102,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         %---Objective function---%
         weight = (L1+L2+L3+L4+L5+L6+L7)*Area*density;
         f = weight; %minimize weight
-        
-        
+                
         %---Inequality constraints (c<=0)---%
         [constraint_number,~] = size(all_member_stress);
         c = zeros(constraint_number*2,1); % create column vector
@@ -117,6 +116,8 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         c(67) = 5-theta6;
         c(68) = 5-theta7;
         c(69) = 5-theta9;
+        c(70) = theta9 - 90;
+        c(71) = theta3 - 90;
         
         %equality constraints (ceq=0)
         ceq = [];
