@@ -36,8 +36,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         % Area of cross section of beam - m^2
         Area = x(6);
             
-        %---Constants---%
-        
+        %---Constants---%       
         % Annealed 1018 steel
         % Yield strength - MPa
         Sy = 220e6;
@@ -47,8 +46,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         density = 7850;
         % Young's modulus - Pascal
         Esteel = 205e9;
-
-        
+      
         FactorOfSafety = 1.5;
               
         F1 = 10000; %N
@@ -56,8 +54,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         phiF1 = 90; %degrees
         phiF2 = 90; %degrees
         
-        %---Design Functions---%
-        
+        %---Design Functions---%       
         % Other Truss Dimensions
         [theta2,theta3,theta4,theta5,theta6,theta7,theta8,theta9,L3,L4,L5] = calculateOtherTrussDimensions(L1,L2,L6,L7,theta1);              
         
@@ -88,10 +85,11 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
             c(2*index+offset-1) = theta_min - thetas(index);
             c(2*index+offset) = thetas(index) - theta_max;
         end     
-        % Truss Height > 1 m 
-        c(31) = 0.5 - L1*(sind(theta1));
+        % Truss Height > 1 m
+        trussHeight = sind(theta1);
+        c(31) = 0.5 - L1*trussHeight;
         % Truss Height < 2.5 m
-        c(32) = L1*(sind(theta1)) - 2.5;
+        c(32) = L1*trussHeight - 2.5;
         % Bottom of the truss is bigger than top of the truss
         c(33) = L2-(L6+L7);
         % Buckling Constraints
@@ -118,6 +116,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
     xopt %design variables at the minimum
     fopt %objective function value at the minumum  fopt = f(xopt)
     Forces_In_Each_Member = memberForces'
+    objcon(xopt);
     plot_truss(xopt);
 
     % ------------Separate obj/con (do not change)------------
