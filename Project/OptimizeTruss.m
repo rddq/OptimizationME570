@@ -4,18 +4,18 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
     clear
     clf
     % Set mins and maxes
-    theta_min = 45;
+    theta_min = 30;
     theta_max = 85;
     theta_init = 60;
     % Truss member length min and max
-    mL_Min = 0.5;
+    mL_Min = 0.1;
     mL_Max = 3;
     mL_init = 1.5;
     
-    %var = theta 1,L1,L2,L6,L7    %design variables
-    x0 = [theta_init,mL_init,mL_init,mL_init,mL_init]; %starting point
-    ub = [theta_max,mL_Max,mL_Max,mL_Max,mL_Max]; %upper bound
-    lb = [theta_min,mL_Min,mL_Min,mL_Min,mL_Min]; %lower bound
+    %var = theta 1,L1,L2,L6,L7, Cross-sectional Area    %design variables
+    x0 = [theta_init,mL_init,mL_init,mL_init,mL_init,0.1]; %starting point
+    ub = [theta_max,mL_Max,mL_Max,mL_Max,mL_Max,0.5]; %upper bound
+    lb = [theta_min,mL_Min,mL_Min,mL_Min,mL_Min,0.0001]; %lower bound
 
     % ------------Linear constraints------------
     A = [];
@@ -24,7 +24,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
     beq = [];
 
     % ------------Objective and Non-linear Constraints------------
-    function [f, c, ceq] = objcon(x)
+    function [f, c, ceq,memberForces] = objcon(x)
         %---Design Variables---%   
         % Angle in degrees
         theta1 = x(1);             
@@ -38,13 +38,13 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
              
         %---Constants---%
         % Area of cross section of beam m^2
-        Area = 0.15^2*pi;
+        Area = x(6);
         
         % Annealed 1018 steel
         % Yield strength - MPa
-        Sy = 220;
+        Sy = 220e6;
         % Ultimate Tensile Strength - MPa
-        Sut = 341;  
+        Sut = 341e6;  
         % Density kg/m^3
         density = 7850;
         
@@ -74,38 +74,47 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         c = zeros(numberOfMembers*2+16+3,1); 
         
         maxCompressiveForce = Sy/(FactorOfSafety);
-        maxTensionForce = Sut/(FactorOfSafety);
+        maxTensionForce = -Sut/(FactorOfSafety);
         % Create min and max constraint for each member
         for index = 1:numberOfMembers
-            c(2*index-1) = all_member_stress(index)-maxCompressiveForce;
-            c(2*index) = -Sut/maxTensionForce-all_member_stress(index);
+            c(2*index-1) = (all_member_stress(index)-maxCompressiveForce);
+            c(2*index) = maxTensionForce-all_member_stress(index);
         end 
-        
         % Create min and max constraint for each theta
-        thetas = [theta2,theta3,theta5,theta6,theta7,theta9];
+        thetas = [theta2,theta3,theta4,theta5,theta6,theta7,theta8,theta9];
         offset = 2*numberOfMembers;
-        for index = 1:6
+        for index = 1:8
             c(2*index+offset-1) = theta_min - thetas(index);
             c(2*index+offset) = thetas(index) - theta_max;
-        end 
-        
+        end     
         % Height > 1, Height < 2.5 m
-        c(32) = 0.5 - L1*(sind(theta1));
-        c(33) = L1*(sind(theta1)) - 2.5;
+        c(31) = 0.5 - L1*(sind(theta1));
+        c(32) = L1*(sind(theta1)) - 2.5;
         % Bottom of the truss is bigger than top of the truss
-        c(34) = L2-(L6+L7);
+        c(33) = L2-(L6+L7);
+        Esteel = 205e9;
+        c(34) = all_member_stress(1) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L1);
+        c(35) = all_member_stress(2) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L2);
+        c(36) = all_member_stress(3) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L3);
+        c(37) = all_member_stress(4) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L4);
+        c(38) = all_member_stress(5) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L5);
+        c(39) = all_member_stress(6) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L6);
+        c(40) = all_member_stress(7) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L7);
         
         %equality constraints (ceq=0)
         ceq = [];
 
     end
-
+    function force = f_buckle_crit(E,I,L)
+        force = (pi^2*E*I)/(L^2);
+    end
     % ------------Call fmincon------------
-    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on');
+    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on','MaxFunctionEvaluations',500000,'MaxIterations',10000);
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
-    [f, c, ceq] = objcon(xopt);
+    [f, c, ceq,memberForces] = objcon(xopt);
     xopt %design variables at the minimum
     fopt %objective function value at the minumum  fopt = f(xopt)
+    Forces_In_Each_Member = memberForces'
     plot_truss(xopt);
 
     % ------------Separate obj/con (do not change)------------
@@ -156,14 +165,15 @@ function [theta2,theta3,theta4,theta5,theta6,theta7,theta8,theta9,L3,L4,L5] = ca
     theta3 = lawCosinesAngle(L1,L6,L3);
 
     % Calculation for L4 guarantees that L2 is vertical
-    L4 = sqrt((L1*cosd(theta1)-L6)^2+(L1*sind(theta1))^2);
+    L4 = sqrt((L1*cosd(theta1)+L2-L6)^2+(L1*sind(theta1))^2);
     theta4 = lawCosinesAngle(L4,L2,L3);
     theta5 = lawCosinesAngle(L2,L3,L4);
     theta6 = lawCosinesAngle(L3,L2,L4);
 
-    theta8 = 180-theta3-theta5;
-    L5 = lawCosinesLength(L4,L7,theta8);                
+    % Fix L5 to be similar to L4
+    L5 = sqrt((L1*cosd(theta1)+L2-L6-L7)^2+(L1*sind(theta1))^2);                
     theta7 = lawCosinesAngle(L7,L4,L5);
+    theta8 = lawCosinesAngle(L5,L4,L7);
     theta9 = lawCosinesAngle(L4,L7,L5);
 end
 function memberForces = calculateForces(F1,phiF1,F2,phiF2,theta1,theta3,theta6,theta8,theta9,L1,L6,L5)
