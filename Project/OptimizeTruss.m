@@ -24,29 +24,30 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
     beq = [];
 
     % ------------Objective and Non-linear Constraints------------
-    function [f, c, ceq,memberForces] = objcon(x)
+    function [f, c, ceq, memberForces] = objcon(x)
         %---Design Variables---%   
         % Angle in degrees
         theta1 = x(1);             
         % Length in meters
-        % Height is constrained with L1
-        % Length is constrained with L2 and L6 L7
         L1 = x(2);
         L2 = x(3);
         L6 = x(4);
-        L7 = x(5);       
-             
-        %---Constants---%
-        % Area of cross section of beam m^2
+        L7 = x(5); 
+        % Area of cross section of beam - m^2
         Area = x(6);
+            
+        %---Constants---%
         
         % Annealed 1018 steel
         % Yield strength - MPa
         Sy = 220e6;
         % Ultimate Tensile Strength - MPa
         Sut = 341e6;  
-        % Density kg/m^3
+        % Density - kg/m^3
         density = 7850;
+        % Young's modulus - Pascal
+        Esteel = 205e9;
+
         
         FactorOfSafety = 1.5;
               
@@ -87,19 +88,21 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
             c(2*index+offset-1) = theta_min - thetas(index);
             c(2*index+offset) = thetas(index) - theta_max;
         end     
-        % Height > 1, Height < 2.5 m
+        % Truss Height > 1 m 
         c(31) = 0.5 - L1*(sind(theta1));
+        % Truss Height < 2.5 m
         c(32) = L1*(sind(theta1)) - 2.5;
         % Bottom of the truss is bigger than top of the truss
         c(33) = L2-(L6+L7);
-        Esteel = 205e9;
-        c(34) = all_member_stress(1) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L1);
-        c(35) = all_member_stress(2) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L2);
-        c(36) = all_member_stress(3) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L3);
-        c(37) = all_member_stress(4) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L4);
-        c(38) = all_member_stress(5) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L5);
-        c(39) = all_member_stress(6) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L6);
-        c(40) = all_member_stress(7) - f_buckle_crit(Esteel,sqrt(Area)^4/12,L7);
+        % Buckling Constraints
+        I_square_beam = sqrt(Area)^4/12;
+        c(34) = all_member_stress(1) - f_buckle_crit(Esteel,I_square_beam,L1);
+        c(35) = all_member_stress(2) - f_buckle_crit(Esteel,I_square_beam,L2);
+        c(36) = all_member_stress(3) - f_buckle_crit(Esteel,I_square_beam,L3);
+        c(37) = all_member_stress(4) - f_buckle_crit(Esteel,I_square_beam,L4);
+        c(38) = all_member_stress(5) - f_buckle_crit(Esteel,I_square_beam,L5);
+        c(39) = all_member_stress(6) - f_buckle_crit(Esteel,I_square_beam,L6);
+        c(40) = all_member_stress(7) - f_buckle_crit(Esteel,I_square_beam,L7);
         
         %equality constraints (ceq=0)
         ceq = [];
@@ -111,7 +114,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
     % ------------Call fmincon------------
     options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on','MaxFunctionEvaluations',500000,'MaxIterations',10000);
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);
-    [f, c, ceq,memberForces] = objcon(xopt);
+    [f, c, ceq, memberForces] = objcon(xopt);
     xopt %design variables at the minimum
     fopt %objective function value at the minumum  fopt = f(xopt)
     Forces_In_Each_Member = memberForces'
@@ -119,10 +122,10 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
 
     % ------------Separate obj/con (do not change)------------
     function [f] = obj(x) 
-        [f, ~, ~] = objcon(x);
+        [f, ~, ~, ~] = objcon(x);
     end
     function [c, ceq] = con(x) 
-        [~, c, ceq] = objcon(x);
+        [~, c, ceq, ~] = objcon(x);
     end
 end
 
