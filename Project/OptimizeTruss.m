@@ -59,8 +59,9 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         [theta2,theta3,theta4,theta5,theta6,theta7,theta8,theta9,L3,L4,L5] = calculateOtherTrussDimensions(L1,L2,L6,L7,theta1);              
         
         % Find Member Stresses
-        memberStresses = calculateStresses(F1,phiF1,F2,phiF2,theta1,theta3,theta6,theta8,theta9,L1,L6,L5,Area);
-             
+        memberForces = calculateForces(F1,phiF1,F2,phiF2,theta1,theta3,theta6,theta8,theta9,L1,L6,L5);
+        memberStresses = memberForces./Area;
+        
         %---Objective function---%
         weight = (L1+L2+L3+L4+L5+L6+L7)*Area*density;
         f = weight; % minimize weight
@@ -97,8 +98,11 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
         for index = 1:numberOfMembers
             if memberStresses(index) > 0
                 BucklingConstraint = memberStresses(index) - f_buckle_crit(Esteel,I_square_beam,L(index));
-                c = [c; BucklingConstraint];
+                c = [c; BucklingConstraint];     
+            else
+                c = [c; -10000];
             end
+            
         end
         
         %equality constraints (ceq=0)
@@ -177,7 +181,7 @@ function [theta2,theta3,theta4,theta5,theta6,theta7,theta8,theta9,L3,L4,L5] = ca
     theta8 = lawCosinesAngle(L5,L4,L7);
     theta9 = lawCosinesAngle(L4,L7,L5);
 end
-function memberStresses = calculateStresses(F1,phiF1,F2,phiF2,theta1,theta3,theta6,theta8,theta9,L1,L6,L5,Area)
+function memberForces = calculateForces(F1,phiF1,F2,phiF2,theta1,theta3,theta6,theta8,theta9,L1,L6,L5)
     % Reaction Forces
     Rx = -(F1*cosd(phiF1)+F2*cosd(phiF2));
     Qy = F1*sind(phiF1)*L1*cosd(theta1)+F2*sind(phiF2)*(L6-L5*cosd(theta9));
@@ -199,6 +203,4 @@ function memberStresses = calculateStresses(F1,phiF1,F2,phiF2,theta1,theta3,thet
     A_mat = [Ax;Ay;Bx;By;Cx;Cy;Dx;Dy;Ex;Ey];
     b_mat = [-F1*cosd(phiF1); F1*sind(phiF1); -F2*cosd(phiF2); F2*sind(phiF2); -Rx; -Ry; 0; 0; 0; -Qy];
     memberForces = mldivide(A_mat,b_mat);
-    % Calculate stress with F/A
-    memberStresses = memberForces./Area;
 end
