@@ -21,12 +21,12 @@
    
     xopt    %design variables at the minimum
     fopt    %objective function value at the minumum
-    [f, g, c, ceq] = objcon(xopt);
+    [f, c, ceq] = objcon(xopt);
     c
     nfun
 
     % ------------Objective and Non-linear Constraints------------
-    function [f, grad, c, ceq] = objcon(x)
+    function [f, c, ceq] = objcon(x)
         global nfun;
         
         %get data for truss from Data.m file
@@ -40,8 +40,6 @@
         % call Truss to get weight and stresses
         [weight,stress] = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, Elem);
         
-        grad = gradImag(Elem(:,3), @Truss, 0.0001, Elem, ndof, nbc, nelem, E, dens, Node, force, bc);
-        
         %objective function
         f = weight; %minimize weight
         
@@ -54,48 +52,50 @@
         %equality constraints (ceq=0)
         ceq = [];
         nfun = nfun + 1;
-
     end
 
     % ------------Separate obj/con You may wish to change------------
-    function [f,grad] = obj(x) 
-        [f, grad, ~, ~] = objcon(x);
+    function [f, grad] = obj(x) 
+        [f, c, ~] = objcon(x);             
+        h = 0.0001; 
+        type = "d";
+        [grad,cgrad] = findGrad(x,f,c,h,type);
     end
     function [c, ceq] = con(x) 
-        [~, ~, c, ceq] = objcon(x);
+        [~, c, ceq] = objcon(x);
     end
-    
-function [grad] = gradCentral(x,Truss,h, Elem, ndof, nbc, nelem, E, dens, Node, force, bc)
-    n = size(x);
-    grad = zeros(n);
-    for i=1:n
-        ElemF = Elem;
-        ElemB = Elem;
-        ElemF(i,3) = x(i) + h;
-        f_forward = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemF);
-        ElemB(i,3) = x(i) - h;
-        f_backward = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemB);
-        grad(i) = (f_forward-f_backward)/(2*h);
+
+    function [grad, cgrad] = findGrad(x,fo,co,h,type)
+        n = size(x);
+        grad = zeros(n);
+        nc = size(co);
+        for i=1:n
+            if (type=="forward" || type=="central") 
+                xf = x;
+                xf(i) = x(i) + h;
+                [f_f,c_f,~] = objcon(xf);
+                if(type=="forward")
+                    grad(i) = (f_f-fo)/h;
+                    for j = 1:nc
+                        cgrad(i,j) = (c_f(j)-co(j))/h;
+                    end
+                else
+                    xb = x;
+                    xb(i) = x(i) - h;
+                    [f_b,c_b,~] = objcon(xb);
+                    grad(i) = (f_f-f_b)/(2*h);
+                    for j = 1:nc
+                        cgrad(i,j) = (c_f(j)-c_b(j))/h;
+                    end
+                end
+            else
+                xI = complex(x);
+                xI(i) = x(i)+1i*h;
+                [f_im,c_im,~] = objcon(xI);
+                grad(i) = imag(f_im)/h;   
+                for j = 1:nc
+                    cgrad(i,j) = imag(c_im(j))/h;
+                end
+            end
+        end          
     end
-end
-function [grad] = gradForward(x,Truss,h, Elem, ndof, nbc, nelem, E, dens, Node, force, bc)
-    n = size(x);
-    grad = zeros(n);
-    fb = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, Elem);
-    for i=1:n
-        ElemF = Elem;
-        ElemF(i,3) = x(i) + h;
-        f_forward = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemF);
-        grad(i) = (f_forward-fb)/h;
-    end
-end
-function [grad] = gradImag(x,Truss,h, Elem, ndof, nbc, nelem, E, dens, Node, force, bc)
-    n = size(x);
-    grad = zeros(n);
-    for index=1:n
-        ElemI = complex(Elem);
-        ElemI(index,3) = x(index) + 1i*h;
-        f_im = Truss(ndof, nbc, nelem, E, dens, Node, force, bc, ElemI);
-        grad(index) = imag(f_im)/h;
-    end
-end
