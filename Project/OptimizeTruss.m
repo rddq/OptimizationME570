@@ -85,11 +85,11 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
             c(2*index+offset-1) = theta_min - thetas(index);
             c(2*index+offset) = thetas(index) - theta_max;
         end     
-        trussHeight = sind(theta1);
+        trussHeight = L1*sind(theta1);
         % Truss Height > 1 m
-        c(31) = 0.5 - L1*trussHeight;
+        c(31) = 0.5 - trussHeight;
         % Truss Height < 2.5 m
-        c(32) = L1*trussHeight - 2.5;
+        c(32) = trussHeight - 2.5;
         % Bottom of the truss is bigger than top of the truss
         c(33) = L2-(L6+L7);
         % Buckling Constraints - only apply if member is under compression
@@ -99,10 +99,7 @@ function [xopt, fopt, exitflag, output] = OptimizeTruss()
             if memberStresses(index) > 0
                 BucklingConstraint = memberStresses(index) - f_buckle_crit(Esteel,I_square_beam,L(index));
                 c = [c; BucklingConstraint];     
-            else
-                c = [c; -10000];
-            end
-            
+            end           
         end
         
         %equality constraints (ceq=0)
@@ -144,9 +141,6 @@ function plot_truss(xopt)
     L2 = xopt(3);
     L6 = xopt(4);
     L7 = xopt(5);
-    
-    [theta2,theta3,theta4,theta5,theta6,theta7,theta8,theta9,L3,L4,L5]...
-        = calculateOtherTrussDimensions(L1,L2,L6,L7,theta1);
     
     C = [0,0];
     A = [L1*cosd(theta1),L1*sind(theta1)];
