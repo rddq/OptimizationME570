@@ -15,7 +15,7 @@
     
     % ------------Call fmincon------------
   
-    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on','SpecifyObjectiveGradient',true);
+    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on','SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true);
     %,'SpecifyObjectiveGradient',true
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);  
    
@@ -58,43 +58,48 @@
     function [f, grad] = obj(x) 
         [f, c, ~] = objcon(x);             
         h = 0.0001; 
-        type = "d";
-        [grad,cgrad] = findGrad(x,f,c,h,type);
+        type = "central";
+        [grad,~] = findGrad(x,f,c,h,type);
     end
-    function [c, ceq] = con(x) 
-        [~, c, ceq] = objcon(x);
+    function [c, ceq,cgrad,ceqgrad] = con(x) 
+        [f, c, ceq] = objcon(x);
+        h = 0.0001; 
+        type = "central";
+        [~, cgrad] = findGrad(x,f,c,h,type);
+        ceqgrad = ceq;
     end
 
     function [grad, cgrad] = findGrad(x,fo,co,h,type)
-        n = size(x);
-        grad = zeros(n);
-        nc = size(co);
-        for i=1:n
+        [~,sizex] = size(x);
+        grad = zeros(sizex,1);
+        [nc,~] = size(co);
+        cgrad = zeros(nc,nc);
+        for index=1:sizex
             if (type=="forward" || type=="central") 
                 xf = x;
-                xf(i) = x(i) + h;
+                xf(index) = x(index) + h;
                 [f_f,c_f,~] = objcon(xf);
                 if(type=="forward")
-                    grad(i) = (f_f-fo)/h;
+                    grad(index) = (f_f-fo)/h;
                     for j = 1:nc
-                        cgrad(i,j) = (c_f(j)-co(j))/h;
+                        cgrad(index,j) = (c_f(j)-co(j))/h;
                     end
                 else
                     xb = x;
-                    xb(i) = x(i) - h;
+                    xb(index) = x(index) - h;
                     [f_b,c_b,~] = objcon(xb);
-                    grad(i) = (f_f-f_b)/(2*h);
+                    grad(index) = (f_f-f_b)/(2*h);
                     for j = 1:nc
-                        cgrad(i,j) = (c_f(j)-c_b(j))/h;
+                        cgrad(index,j) = (c_f(j)-c_b(j))/h;
                     end
                 end
             else
-                xI = complex(x);
-                xI(i) = x(i)+1i*h;
+                xI = x;
+                xI(index) = x(index)+1j*h;
                 [f_im,c_im,~] = objcon(xI);
-                grad(i) = imag(f_im)/h;   
-                for j = 1:nc
-                    cgrad(i,j) = imag(c_im(j))/h;
+                grad(index) = imag(f_im)/h;   
+                for  k= 1:nc
+                    cgrad(index,k) = imag(c_im(k))/h;
                 end
             end
         end          
