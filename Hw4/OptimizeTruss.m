@@ -46,7 +46,7 @@
         %inequality constraints (c<=0)
         c = zeros(10,1);         % create column vector
         for i=1:10
-            c(i) = abs(stress(i))-25000; % check stress both pos and neg         
+            c(i) = sqrt((stress(i))^2)-25000; % check stress both pos and neg         
         end
         
         %equality constraints (ceq=0)
@@ -58,13 +58,13 @@
     function [f, grad] = obj(x) 
         [f, c, ~] = objcon(x);             
         h = 0.0001; 
-        type = "central";
+        type = "im";
         [grad,~] = findGrad(x,f,c,h,type);
     end
     function [c, ceq,cgrad,ceqgrad] = con(x) 
         [f, c, ceq] = objcon(x);
         h = 0.0001; 
-        type = "central";
+        type = "im";
         [~, cgrad] = findGrad(x,f,c,h,type);
         ceqgrad = ceq;
     end
