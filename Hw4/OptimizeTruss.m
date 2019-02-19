@@ -6,13 +6,13 @@
     ub = [20, 20, 20, 20, 20, 20, 20, 20, 20, 20]; %upper bound
     global nfun;
     nfun = 0;
-
+    
     % ------------Linear constraints------------
     A = [];
     b = [];
     Aeq = [];
     beq = [];
-    
+   
     % ------------Call fmincon------------
   
     options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on','SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true);
@@ -57,19 +57,20 @@
     % ------------Separate obj/con You may wish to change------------
     function [f, grad] = obj(x) 
         [f, c, ~] = objcon(x);             
-        h = 0.0001; 
-        type = "im";
-        [grad,~] = findGrad(x,f,c,h,type);
+        [grad,~] = findGrad(x,f,c);
     end
     function [c, ceq,cgrad,ceqgrad] = con(x) 
         [f, c, ceq] = objcon(x);
-        h = 0.0001; 
-        type = "im";
-        [~, cgrad] = findGrad(x,f,c,h,type);
+        [~, cgrad] = findGrad(x,f,c);
         ceqgrad = ceq;
     end
 
-    function [grad, cgrad] = findGrad(x,fo,co,h,type)
+    function [grad, cgrad] = findGrad(x,fo,co)
+        % Define method of numerical differentiation
+        type = "forward"; % "forward", "central", or "complex"
+        % Define step size
+        h = 1e-6;
+        
         [~,sizex] = size(x);
         grad = zeros(sizex,1);
         [nc,~] = size(co);
