@@ -1,0 +1,36 @@
+\documentclass[a4paper]{article}
+\usepackage{fullpage}
+\author{Ryan Day}
+\title{Optimization Homework \#4}
+\begin{document}
+    \maketitle
+    \section{Truss Optimization}
+    \subsection{Scaling}
+    As far as I can tell, scaling the constraints would be useful if the constraints were an order of magnitude higher than the design variables.
+    The design variables are all around the same order of magnitude,, so I don't see the use of scaling there.
+
+    \begin{table}
+        \begin{tabular}[h]{c c c c c}
+            & Number of function calls & Number of Iterations & Avg Time of execution & Stopping Criterion \\
+            No Derivatives supplied&495&19&0.573& \\
+            Forward method&991&19&0.6320& \\
+            Central method&3139&39&1.1457& \\ 
+            Complex method&991&19&0.932&
+            
+        \end{tabular}
+    \end{table}
+%Optimization stopped because the relative changes in all elements of x are
+%less than options.StepTolerance = 1.000000e-10, and the relative maximum constraint
+%violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+%Optimization completed: The relative first-order optimality measure, 3.928372e-08, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+% Optimization completed: The relative first-order optimality measure, 7.607382e-07,
+% is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
+% violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+% Optimization completed: The relative first-order optimality measure, 1.512774e-09,
+% is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
+% violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+\end{document}
