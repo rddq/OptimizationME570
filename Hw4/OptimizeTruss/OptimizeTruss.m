@@ -15,8 +15,8 @@
    
     % ------------Call fmincon------------
   
-    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on','SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true);
-    %,'SpecifyObjectiveGradient',true
+    options = optimoptions(@fmincon,'display','iter-detailed','Diagnostics','on',...
+        'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true);
     [xopt, fopt, exitflag, output] = fmincon(@obj, x0, A, b, Aeq, beq, lb, ub, @con, options);  
    
     xopt    %design variables at the minimum
