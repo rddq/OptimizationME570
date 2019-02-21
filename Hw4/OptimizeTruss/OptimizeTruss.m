@@ -59,7 +59,7 @@
         [f, c, ~] = objcon(x);             
         [grad,~] = findGrad(x,f,c);
     end
-    function [c, ceq,cgrad,ceqgrad] = con(x) 
+    function [c, ceq, cgrad, ceqgrad] = con(x) 
         [f, c, ceq] = objcon(x);
         [~, cgrad] = findGrad(x,f,c);
         ceqgrad = ceq;
@@ -67,7 +67,7 @@
 
     function [grad, cgrad] = findGrad(x,fo,co)
         % Define method of numerical differentiation
-        type = "forward"; % "forward", "central", or "complex"
+        type = "a"; % "forward", "central", or "complex"
         % Define step size
         h = 1e-6;
         

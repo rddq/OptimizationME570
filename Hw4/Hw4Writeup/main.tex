@@ -1,36 +1,95 @@
 \documentclass[a4paper]{article}
 \usepackage{fullpage}
+\usepackage{listings} %--- For including MATLAB code ---%
+    \usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+    \definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+    \definecolor{mylilas}{RGB}{170,55,241}
+    \lstset{language=Matlab,%
+    basicstyle=\footnotesize\ttfamily,
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+   }
+%---End MATLAB code inclusion package ---%
+
 \author{Ryan Day}
 \title{Optimization Homework \#4}
 \begin{document}
     \maketitle
     \section{Truss Optimization}
+
     \subsection{Scaling}
     As far as I can tell, scaling the constraints would be useful if the constraints were an order of magnitude higher than the design variables.
     The design variables are all around the same order of magnitude,, so I don't see the use of scaling there.
+    
+    \subsection{Matlab Code implementation}
+    The matlab code is included below the table. 
+    I used a function that took in x, then perturbed the function with a step depending on which type (forward, central, or complex), and then calculated the result.
+    It was not too hard to implement this function. 
+    I simply added it to the end of obj and con in order to get the derivatvies.
+    However, I had to make one change in order to get the complex function to work.
+    This change was changing the inequality constraint from using the abs function to taking the square root of the value squared.
+    This did the same thing as abs but could be used with complex variables.
+    \subsection{Expected Errors of the derivatives}
+    I expected the errors of the derivative to be greatest for the forward, then central, then complex. 
+    The merits of the forward method is it is only takes one function call per derivative. 
+    Central method is slightly more accurate, but takes twice as many function calls.
+    Both of these methods have subtractive error which makes it so you can't have the step size be too small.
+    The complex step method does not have this subtractive error which makes it so you can have an extremely small step size, but then you have to make sure your function can handle complex numbers.
+    In addition to this, the computations of the complex step can take longer than the forward step because of the included complex numbers.
+    I decided on the perturbation 1e-6 because this would make it fairly accurate with each method. 
+    I could have lowered the perturbation for the complex step to make it even more accurate since complex does not have error from losing significant digits in subtraction, but I wanted to compare each method with the same perturbation.
+    Because of this I used 1e-6 for each derivative approximation method. 
+    
+    \subsection{Table and stopping criteria}
+    \begin{center}
+    \begin{tabular}[h]{c c c c c}
+        & \# Function calls & \# Iterations & Avg Time execution& Final Objective value \\
+        No Derivatives supplied&495&19&0.573 &1.5932e+03\\
+        Forward method&991&19&0.6320 & 1.5932e+03\\
+        Central method&3139&39&1.114 & 1.5932e+03\\ 
+        Complex method&991&19&0.932  &   1.5932e+03 
+    \end{tabular}
+\end{center}
 
-    \begin{table}
-        \begin{tabular}[h]{c c c c c}
-            & Number of function calls & Number of Iterations & Avg Time of execution & Stopping Criterion \\
-            No Derivatives supplied&495&19&0.573& \\
-            Forward method&991&19&0.6320& \\
-            Central method&3139&39&1.1457& \\ 
-            Complex method&991&19&0.932&
-            
-        \end{tabular}
-    \end{table}
-%Optimization stopped because the relative changes in all elements of x are
-%less than options.StepTolerance = 1.000000e-10, and the relative maximum constraint
-%violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+The execution time was fastest with fmincon with no supplied derivatives because they only call the derivative function once instead of twice.  
+The forward method and complex method had the same number of function calls as expected since they both call the objective function just once to calculate derivatives. 
+The complex method took longer than the forward method because it had to deal with complex numbers. 
+The central method took about twice as many function calls and so took a lot longer than any other method.
 
-%Optimization completed: The relative first-order optimality measure, 3.928372e-08, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+\textbf{Stopping Criterion for no derivatives supplied: }
 
-% Optimization completed: The relative first-order optimality measure, 7.607382e-07,
-% is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
-% violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-10, and the relative maximum constraint
+violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
-% Optimization completed: The relative first-order optimality measure, 1.512774e-09,
-% is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
-% violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+\textbf{Stopping Criterion for other methods:}
+
+\textbf{Forward:}
+
+Optimization completed: The relative first-order optimality measure, 3.928372e-08, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+\textbf{Central:}
+
+Optimization completed: The relative first-order optimality measure, 7.607382e-07, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+\textbf{Complex:}
+
+Optimization completed: The relative first-order optimality measure, 1.512774e-09, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+
+The stopping criterion was only different for the fmincon function w
+
+\lstinputlisting[language=matlab]{../OptimizeTruss/OptimizeTruss.m} 
+
 
 \end{document}
