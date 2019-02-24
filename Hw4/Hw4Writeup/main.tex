@@ -29,55 +29,60 @@
     \section{Truss Optimization}
 
     \subsection{Scaling}
-    As far as I can tell, scaling the constraints would be useful if the constraints were an order of magnitude higher than the design variables.
-    The design variables are all around the same order of magnitude,, so I don't see the use of scaling there.
+    Scaling the constraints is useful. I scaled it by dividing the constraints by $10^{2}$. This reduced the number of function calls by more than half when I implemented it. 
+    I tried to make the constraints the same order of magnitude as the design functions.
+    The design variables are all around the same order of magnitude, so I don't see the use of scaling there.
     
     \subsection{Matlab Code implementation}
-    The matlab code is included below the table. 
-    I used a function that took in x, then perturbed the function with a step depending on which type (forward, central, or complex), and then calculated the result.
+    The matlab code is included in appendix \ref{appendix.trussCode}.
+    I used a function that took in x, then perturbed the function with a step depending on a type input (forward, central, or complex), and then calculated the gradient and constraints gradient.
     It was not too hard to implement this function. 
     I simply added it to the end of obj and con in order to get the derivatvies.
     However, I had to make one change in order to get the complex function to work.
     This change was changing the inequality constraint from using the abs function to taking the square root of the value squared.
     This did the same thing as abs but could be used with complex variables.
+    
     \subsection{Expected Errors of the derivatives}
     I expected the errors of the derivative to be greatest for the forward, then central, then complex. 
     The merits of the forward method is it is only takes one function call per derivative. 
     Central method is slightly more accurate, but takes twice as many function calls.
-    Both of these methods have subtractive error which makes it so you can't have the step size be too small.
+    Both central and forward methods have subtractive error which makes it so you can't have the step size be too small.
     The complex step method does not have this subtractive error which makes it so you can have an extremely small step size, but then you have to make sure your function can handle complex numbers.
     In addition to this, the computations of the complex step can take longer than the forward step because of the included complex numbers.
-    I decided on the perturbation 1e-6 because this would make it fairly accurate with each method. 
-    I could have lowered the perturbation for the complex step to make it even more accurate since complex does not have error from losing significant digits in subtraction, but I wanted to compare each method with the same perturbation.
-    Because of this I used 1e-6 for each derivative approximation method. 
+    
+    I figured out the optimal perturbation of forward and central methods by comparing it to the complex step derivative.
+    I checked compared the estimated derivatives from the first iteration between the complex step with a step size of $10^{-30}$. 
+    I knew the complex derivative would be pretty accurate because it has no subtractive error, so you can make the step size extremely small. 
+    $10^{-8}$ turned out to be the ideal step size. It had an error for central and forward on the order of $10^{-6}$ which was fine.
+    When I tried at 1e-9 there was an error in the gradient of forward and central of $10^{-4}$ which was too much. 
+    The time to calculate was around the same with both step sizes, nevertheless I chose the step size of $10^{-8}$ for forward and central methods.
     
     \subsection{Table and stopping criteria}
     \begin{center}
     \begin{tabular}[h]{c c c c c}
         & \# Function calls & \# Iterations & Avg Time execution& Final Objective value \\
-        No Derivatives supplied&495&19&0.573 &1.5932e+03\\
-        Forward method&991&19&0.6320 & 1.5932e+03\\
-        Central method&3139&39&1.114 & 1.5932e+03\\ 
-        Complex method&991&19&0.932  &   1.5932e+03 
+        No Derivatives supplied&287&12&0.420 &1.5932e+03\\
+        Forward method&309&12&0.415 & 1.5932e+03\\
+        Central method&1849&5&0.783 & 1.5932e+03\\ 
+        Complex method&287&12&0.510  &   1.5932e+03 
     \end{tabular}
 \end{center}
 
-The execution time was fastest with fmincon with no supplied derivatives because they only call the derivative function once instead of twice.  
+The execution time was fastest by just a little bit with the forward method. It barely beat out the fmincon with no supplied derivatives.
 The forward method and complex method had the same number of function calls as expected since they both call the objective function just once to calculate derivatives. 
 The complex method took longer than the forward method because it had to deal with complex numbers. 
-The central method took about twice as many function calls and so took a lot longer than any other method.
+The central method took about twice as many function calls and so took a lot longer than any other method. 
+However, it had about half the iterations, because it goes in a more accurate direction with .
 
 \textbf{Stopping Criterion for no derivatives supplied: }
 
-Optimization stopped because the relative changes in all elements of x are
-less than options.StepTolerance = 1.000000e-10, and the relative maximum constraint
-violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization completed: The relative first-order optimality measure, 5.312214e-07, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
 \textbf{Stopping Criterion for other methods:}
 
 \textbf{Forward:}
 
-Optimization completed: The relative first-order optimality measure, 3.928372e-08, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization completed: The relative first-order optimality measure, 5.312214e-07, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
 \textbf{Central:}
 
@@ -88,8 +93,13 @@ Optimization completed: The relative first-order optimality measure, 7.607382e-0
 Optimization completed: The relative first-order optimality measure, 1.512774e-09, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
 The stopping criterion was only different for the fmincon function w
+\section{Automatic Differentiation}
 
+\appendix
+\section{Truss Optimization}
+\label{appendix.trussCode}
 \lstinputlisting[language=matlab]{../OptimizeTruss/OptimizeTruss.m} 
-
+\section{Automatic differentiation}
+\lstinputlisting[language=matlab]{../AutomaticDifferentiation/optimize_spring.m} 
 
 \end{document}
