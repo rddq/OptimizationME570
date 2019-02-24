@@ -46,7 +46,7 @@
         %inequality constraints (c<=0)
         c = zeros(10,1);         % create column vector
         for i=1:10
-            c(i) = sqrt((stress(i))^2)-25000; % check stress both pos and neg         
+            c(i) = (sqrt((stress(i))^2)-25000)/10^2; % check stress both pos and neg         
         end
         
         %equality constraints (ceq=0)
@@ -67,9 +67,9 @@
 
     function [grad, cgrad] = findGrad(x,fo,co)
         % Define method of numerical differentiation
-        type = "a"; % "forward", "central", or "complex"
+        type = "central"; % "forward", "central", or "complex"
         % Define step size
-        h = 1e-6;
+        h = 1e-8;
         
         [~,sizex] = size(x);
         grad = zeros(sizex,1);

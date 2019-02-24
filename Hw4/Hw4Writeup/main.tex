@@ -53,9 +53,9 @@
     I figured out the optimal perturbation of forward and central methods by comparing it to the complex step derivative.
     I checked compared the estimated derivatives from the first iteration between the complex step with a step size of $10^{-30}$. 
     I knew the complex derivative would be pretty accurate because it has no subtractive error, so you can make the step size extremely small. 
-    $10^{-8}$ turned out to be the ideal step size. It had an error for central and forward on the order of $10^{-6}$ which was fine.
-    When I tried at 1e-9 there was an error in the gradient of forward and central of $10^{-4}$ which was too much. 
-    The time to calculate was around the same with both step sizes, nevertheless I chose the step size of $10^{-8}$ for forward and central methods.
+    $10^{-8}$ turned out to be the ideal step size for forward and central. It had an error for forward on the order of $10^{-6}$ which was fine.
+    When I tried at 1e-9 there was an error in the gradient of forward of $10^{-4}$ which was too much. 
+    For some reason the central wasn't converging when I scaled it, so that is why it was so much slower than the other functions.
     
     \subsection{Table and stopping criteria}
     \begin{center}
@@ -63,7 +63,7 @@
         & \# Function calls & \# Iterations & Avg Time execution& Final Objective value \\
         No Derivatives supplied&287&12&0.420 &1.5932e+03\\
         Forward method&309&12&0.415 & 1.5932e+03\\
-        Central method&1849&5&0.783 & 1.5932e+03\\ 
+        Central method&4621&5&1.114 & 1.5932e+03\\ 
         Complex method&287&12&0.510  &   1.5932e+03 
     \end{tabular}
 \end{center}
@@ -76,30 +76,62 @@ However, it had about half the iterations, because it goes in a more accurate di
 
 \textbf{Stopping Criterion for no derivatives supplied: }
 
-Optimization completed: The relative first-order optimality measure, 5.312214e-07, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization completed: The relative first-order optimality measure, 5.312214e-07,
+is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
+violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
 \textbf{Stopping Criterion for other methods:}
 
 \textbf{Forward:}
 
-Optimization completed: The relative first-order optimality measure, 5.312214e-07, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-10, and the relative maximum constraint
+violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
 \textbf{Central:}
 
-Optimization completed: The relative first-order optimality measure, 7.607382e-07, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization completed: The relative first-order optimality measure, 7.486241e-07,
+is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
+violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
 \textbf{Complex:}
 
-Optimization completed: The relative first-order optimality measure, 1.512774e-09, is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
+Optimization completed: The relative first-order optimality measure, 3.928371e-08,
+is less than options.OptimalityTolerance = 1.000000e-06, and the relative maximum constraint
+violation, 0.000000e+00, is less than options.ConstraintTolerance = 1.000000e-06.
 
-The stopping criterion was only different for the fmincon function w
+The stopping criterion for forward and without supplying derivatives was that the x inputs had very small changes, signalling that there was an optimum. 
+For the complex and central step, the function output met the optimality measure. 
+Because I only looked at 5 significant digits for the optimum, these measures didn't affect the optimum at all.
+
 \section{Automatic Differentiation}
-
+\subsection{How does this method work?}
+I define the values to be of the valder class. 
+Any other function that has a valder variable as part of its calculation will then take the valder variable  into account and then operator overloading is used to compute derivatives for the original valder functions.
+In this way you can get derivatives without having to change your code much.
+\subsection{How is AD different from other numerical methods?}
+AD is different because it solves the derivatives analytically using lookup functions and operator overloading instead of numerically approximating the value.
+\subsection{Matlab Code}
+AD code is found in appendix \ref{appendix.adcode}
 \appendix
 \section{Truss Optimization}
 \label{appendix.trussCode}
 \lstinputlisting[language=matlab]{../OptimizeTruss/OptimizeTruss.m} 
 \section{Automatic differentiation}
 \lstinputlisting[language=matlab]{../AutomaticDifferentiation/optimize_spring.m} 
-
+\label{appendix.adcode}
 \end{document}
+xopt =
+
+  Columns 1 through 5
+
+    6.3535    0.1016    6.4508    4.0730    0.1028
+
+  Columns 6 through 10
+
+    0.1016    5.4464    5.2882    6.0309    0.1039
+
+
+fopt =
+
+   1.4775e+03
