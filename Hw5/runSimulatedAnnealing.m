@@ -4,11 +4,11 @@ xInit = [-5;-5];
 
 plotIt = false;
 
-Nall = [10,50,70];
-iterationsPerCycleAll = [30,50,70];
-perturbValueAll = [0.95,1.15,1.50,1.75];
-PstartAll = [0.2,0.3,0.4,0.5,0.6,0.7,0.8];
-PfinishAll = [1e-8];
+Nall = [300];
+iterationsPerCycleAll = [100];
+perturbValueAll = [1.05,1.15,1.25,1.5];
+PstartAll = [0.99];
+PfinishAll = [1e-10];
 dFF = fullfact([size(Nall,2),size(iterationsPerCycleAll,2),size(perturbValueAll,2),size(PstartAll,2),size(PfinishAll,2)]);
 
 numberOfExperiments = size(dFF,1);
@@ -23,7 +23,7 @@ for index = 1:numberOfExperiments
     Pstart = PstartAll(dFF(index,4));
     Pfinish = PfinishAll(dFF(index,5));
     input = [N,iterationsPerCycle,perturbValue,Pstart,Pfinish];
-    for i = 1:20
+    for i = 1:10
         [x,f] = simulatedAnnealing(xInit,input,plotIt);
         if (abs(x(1)) < 0.1) && (abs(x(2)) <0.1)
             xhist = xhist+1;
@@ -33,8 +33,9 @@ for index = 1:numberOfExperiments
         inputwin = input;
         xwin = xhist;
     end
+    input
+    xhist
     index
 end
-
-input
+inputwin
 xwin
