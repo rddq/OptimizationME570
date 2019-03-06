@@ -14,15 +14,20 @@ allChangeF = [];
 T = Tstart;
 x = x_init;
 f = fun(x);
+allf = [f];
+cycles = 1;
 
 for index1 = 1:N
     for iteration_index = 1:iterationsPerCycle
         [x, f, allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,lowerLimit,perturbValue);
+        allf = [allf f];
+        cycles = cycles + 1;
     end
         T = F*T;
 end
 xFinal = x
 fFinal = f
+plotCycles(allf,cycles)
 
 function [x,f,allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,lowerLimit,perturbValue)
     xNew = x;
@@ -65,5 +70,10 @@ function output = fun(x)
     x1 = x(1);
     x2 = x(2);
     output = 2.0+0.2*x1^2+0.2*x2^2 - cos(pi*x1) - cos(pi*x2);
+end
+function plotCycles(allf,cycles)
+    clf
+    figure(1)
+    plot(1:cycles,allf)
 end
 end
