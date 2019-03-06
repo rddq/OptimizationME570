@@ -11,20 +11,24 @@ Tfinish = -1/(log(Pfinish));
 F = (Tfinish/Tstart)^(1/(N-1)); % Reduction factor per cycle
 upperLimit = [5;5];
 lowerLimit = [-5;-5];
-[numberVariables,~] = size(xInit);
-
-allChangeF = [];
+numberVariables = size(xInit,2);
 
 T = Tstart;
 x = xInit;
 f = fun(x);
+allf = zeros(iterationsPerCycle*N,1);
 allf = [f];
 cycles = 1;
-
+changeFavg = 0;
+firstFlag = true;
 for index1 = 1:N
     for iteration_index = 1:iterationsPerCycle
-        [x, f, allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,lowerLimit,perturbValue);
-        allf = [allf f];
+        totalIndex = index1*iterationsPerCycle-(iterationsPerCycle-iteration_index)+1;     
+        [x, f, changeFavg] = iterate(x,f,changeFavg,T,numberVariables,upperLimit,lowerLimit,perturbValue,firstFlag); 
+        if totalIndex == 2
+            firstFlag = false;
+        end
+        allf(totalIndex,1) = f;
         cycles = cycles + 1;
     end
         T = F*T;
@@ -35,7 +39,8 @@ if plotIt
     plotCycles(allf,cycles)
 end
 
-function [x,f,allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,lowerLimit,perturbValue)
+
+function [x,f,avgChangeF] = iterate(x,f,avgChangeFprev,T,numberVariables,upperLimit,lowerLimit,perturbValue,firstFlag)
     xNew = x;
     % Randomly perturb the variables
     for index =  1:numberVariables
@@ -51,12 +56,19 @@ function [x,f,allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,
     end
     fnew = fun(xNew);
     changeF = fnew-f;
-    allChangeF = [allChangeF changeF];
+    % Calculate avg change F
+    if firstFlag
+        avgChangeF = abs(changeF);
+    else
+        avgChangeF = (abs(changeF)+avgChangeFprev)/2;
+    end
+    % If the function is minimized, keep it.
     if changeF < 0
         x = xNew;
         f = fnew;
+    % If function is not minimized, check to keep it or not.
     else
-        P = boltzmannProb(T,changeF,mean(allChangeF));
+        P = boltzmannProb(T,changeF,avgChangeF);
         if rand() < P
            x = xNew;
            f = fnew;
@@ -65,7 +77,7 @@ function [x,f,allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,
 end
 
 function answer = perturb(value)
-    answer = (rand()-(value/2))*value;
+    answer = rand()*value-(value/2);
 end
 
 function prob = boltzmannProb(T,changeE,changeEavg)
