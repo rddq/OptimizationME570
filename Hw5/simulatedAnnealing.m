@@ -1,10 +1,4 @@
-
-N = 200; % Total number of cycles to run
-iterationsPerCycle = 60;
-perturbValue = 1.05;
-
-Pstart = 0.8; % Probability a worse design could be accepted at start
-Pfinish = 1e-6; % Probability a worse design could be accepted at finish
+function f = simulatedAnnealing(N,iterationsPerCycle,perturbValue,Pstart,Pfinish)
 
 Tstart = -1/(log(Pstart));
 Tfinish = -1/(log(Pfinish));
@@ -21,7 +15,7 @@ T = Tstart;
 x = x_init;
 f = fun(x);
 
-for index = 1:N
+for index1 = 1:N
     for iteration_index = 1:iterationsPerCycle
         [x, f, allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,lowerLimit,perturbValue);
     end
@@ -71,4 +65,5 @@ function output = fun(x)
     x1 = x(1);
     x2 = x(2);
     output = 2.0+0.2*x1^2+0.2*x2^2 - cos(pi*x1) - cos(pi*x2);
+end
 end
