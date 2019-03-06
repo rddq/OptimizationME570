@@ -1,10 +1,10 @@
-function f = simulatedAnnealing(N,iterationsPerCycle,perturbValue,Pstart,Pfinish)
+function f_final = simulatedAnnealing(N,iterationsPerCycle,perturbValue,Pstart,Pfinish,plotIt)
 
 Tstart = -1/(log(Pstart));
 Tfinish = -1/(log(Pfinish));
 
 F = (Tfinish/Tstart)^(1/(N-1)); % Reduction factor per cycle
-x_init = [0; 0];
+x_init = [-5; -5];
 upperLimit = [5;5];
 lowerLimit = [-5;-5];
 [numberVariables,~] = size(x_init);
@@ -25,9 +25,10 @@ for index1 = 1:N
     end
         T = F*T;
 end
-xFinal = x
-fFinal = f
-plotCycles(allf,cycles)
+f_final = f;
+if plotIt
+    plotCycles(allf,cycles)
+end
 
 function [x,f,allChangeF] = iterate(x,f,allChangeF,T,numberVariables,upperLimit,lowerLimit,perturbValue)
     xNew = x;
