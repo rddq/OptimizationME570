@@ -97,6 +97,10 @@ end
 function plotCycles(allf,cycles)
     clf
     figure(1)
+    hold on
+    xlabel('function call');
+    ylabel('function value');
+    title('Function Calls vs. Function Values');
     plot(1:cycles,allf)
 end
 

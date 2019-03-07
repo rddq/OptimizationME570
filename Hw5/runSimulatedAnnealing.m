@@ -1,14 +1,14 @@
 clear
 
-xInit = [5;5];
+xInit = [5;-5];
 
 plotIt = false;
 
-Nall = [22,24,26];
-iterationsPerCycleAll = [10];
-perturbValueAll = [4.5];
-PstartAll = [1e-40];
-PfinishAll = [1e-50];
+Nall = [10];
+iterationsPerCycleAll = [6];
+perturbValueAll = [1,2,3,4.5];
+PstartAll = [1e-6,0.5];
+PfinishAll = [1e-6,1e-30];
 upperLimit = [5;5];
 lowerLimit = [-5;-5];
 
