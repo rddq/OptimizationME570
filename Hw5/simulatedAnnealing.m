@@ -42,7 +42,7 @@ x_final = x;
 f_final = f;
 if plotIt
     plotCycles(allf,cycles)
-    contourPlot(allx)
+    contourPlot(allx,allf)
 end
 
 
@@ -100,7 +100,7 @@ function plotCycles(allf,cycles)
     plot(1:cycles,allf)
 end
 
-function contourPlot(allx,upperLimit,lowerLimit)
+function contourPlot(allx,allf)
     meshResolution = 0.1;
     [x1,x2] = meshgrid(-5:meshResolution:5,-5:meshResolution:5);
     output = fun(x1,x2);
@@ -121,7 +121,7 @@ function contourPlot(allx,upperLimit,lowerLimit)
 
     % Plot Contour
     [C,h] = contour(x1,x2,output,[1:13],'k-'); % Plot Contour
-    clabel(C,h,'Labelspacing',250);
+    clabel(C,h,'Labelspacing',500);
     title('Simulated Annealing Optimization');
     xlabel('x1');
     ylabel('x2');
@@ -133,7 +133,7 @@ function contourPlot(allx,upperLimit,lowerLimit)
     line(x_pt', y_pt');
     xlim([-5,5])
     ylim([-5,5])
-    legend(['Starting Point f=',num2str(f(1))],['SA Optimum f=',num2str(f(length(f)))],'Actual Optimum f=0')
+    legend(['Starting Point f=',num2str(allf(1))],['SA Optimum f=',num2str(allf(end))],'Actual Optimum f=0')
 end
 
 end
