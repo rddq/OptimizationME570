@@ -1,4 +1,5 @@
-function [x_final, f_final] = simulatedAnnealing(xInit,input,plotIt)
+function [x_final, f_final] = simulatedAnnealing(xInit,input,plotIt,upperLimit,lowerLimit)
+% Initialize parameterized variables
 N = input(1);
 iterationsPerCycle = input(2);
 perturbValue = input(3);
@@ -9,15 +10,18 @@ Tstart = -1/(log(Pstart));
 Tfinish = -1/(log(Pfinish));
 
 F = (Tfinish/Tstart)^(1/(N-1)); % Reduction factor per cycle
-upperLimit = [5;5];
-lowerLimit = [-5;-5];
-numberVariables = size(xInit,2);
+numberVariables = size(xInit,1);
 
 T = Tstart;
 x = xInit;
-f = fun(x);
-allf = zeros(iterationsPerCycle*N,1);
-allf = [f];
+f = fun(x(1),x(2));
+
+% Initialize histories for plotting
+allx = zeros(numberVariables,iterationsPerCycle*N+1);
+allf = zeros(iterationsPerCycle*N+1,1);
+allx(:,1) =  x;
+allf(1) = f;
+
 cycles = 1;
 changeFavg = 0;
 firstFlag = true;
@@ -28,6 +32,7 @@ for index1 = 1:N
         if totalIndex == 2
             firstFlag = false;
         end
+        allx(:,totalIndex) = x;
         allf(totalIndex,1) = f;
         cycles = cycles + 1;
     end
@@ -37,6 +42,7 @@ x_final = x;
 f_final = f;
 if plotIt
     plotCycles(allf,cycles)
+    contourPlot(allx)
 end
 
 
@@ -54,7 +60,7 @@ function [x,f,avgChangeF] = iterate(x,f,avgChangeFprev,T,numberVariables,upperLi
         end
         xNew(index) = xnewAtIndex;
     end
-    fnew = fun(xNew);
+    fnew = fun(xNew(1),xNew(2));
     changeF = fnew-f;
     % Calculate avg change F
     if firstFlag
@@ -84,14 +90,50 @@ function prob = boltzmannProb(T,changeE,changeEavg)
     prob = exp(-changeE/(changeEavg*T));
 end
 
-function output = fun(x)
-    x1 = x(1);
-    x2 = x(2);
-    output = 2.0+0.2*x1^2+0.2*x2^2 - cos(pi*x1) - cos(pi*x2);
+function output = fun(x1,x2)
+    output = 2.0+0.2.*x1.^2+0.2.*x2.^2 - cos(pi.*x1) - cos(pi.*x2);
 end
+
 function plotCycles(allf,cycles)
     clf
     figure(1)
     plot(1:cycles,allf)
 end
+
+function contourPlot(allx,upperLimit,lowerLimit)
+    meshResolution = 0.1;
+    [x1,x2] = meshgrid(-5:meshResolution:5,-5:meshResolution:5);
+    output = fun(x1,x2);
+    figure(2)
+    hold on;
+    % Plot X0
+    x0 = allx(1,1); 
+    y0 = allx(2,1); 
+    plot(x0,y0,'m*')
+    % Plot SA Optimum
+    xSA_Opt = allx(1,end);
+    ySA_Opt = allx(2,end);
+    plot(xSA_Opt,ySA_Opt,'g*')
+    % Plot Optimum
+    xOpt = 0; 
+    yOpt = 0; 
+    plot(xOpt,yOpt,'r*')
+
+    % Plot Contour
+    [C,h] = contour(x1,x2,output,[1:13],'k-'); % Plot Contour
+    clabel(C,h,'Labelspacing',250);
+    title('Simulated Annealing Optimization');
+    xlabel('x1');
+    ylabel('x2');
+    hold on;
+
+    % Path Lines
+    x_pt = allx(1,:);
+    y_pt = allx(2,:);
+    line(x_pt', y_pt');
+    xlim([-5,5])
+    ylim([-5,5])
+    legend(['Starting Point f=',num2str(f(1))],['SA Optimum f=',num2str(f(length(f)))],'Actual Optimum f=0')
+end
+
 end
