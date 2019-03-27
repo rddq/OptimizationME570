@@ -1,7 +1,7 @@
 clear
 syms f(h,w) h w g1(h,w) g2(h,w) g3(h,w) lambda1 lambda2 lambda3
 
-f(h,w) = h*w;
+f(h,w) = -h*w;
 dfh = diff(f,h);
 dfw = diff(f,w);
 
@@ -21,3 +21,5 @@ solution = solve(dfh - lambda1*dg1h - lambda2*dg2h == 0,...
     dfw - lambda1*dg1w - lambda2*dg2w == 0, g1 == 0, g2 == 0)
 solution.lambda1
 solution.lambda2
+h = solution.h
+w = solution.w

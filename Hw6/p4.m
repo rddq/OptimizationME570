@@ -5,6 +5,7 @@ f(x1,x2) = x1^2 + x2;
 dfx1 = diff(f,x1);
 dfx2 = diff(f,x2);
 fhess = hessian(f)
+
 % g1(x1,x2) = -(x1^2 + x2^2 - 9);
 % dg1x1 = diff(g1,x1);
 % dg1x2 = diff(g1,x2);
