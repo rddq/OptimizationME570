@@ -41,15 +41,3 @@ difference = real_change_f-approximated_change_f
 % accurately, there is only a difference of 0.005 in the approximation to
 % the real.
 
-%% Part C
-% If a problem has a quadratic objective and linear equality constraint,
-% then the KKT constraints are linear. This is also true for a problem with a
-% quadratic objective and a linear inequality constraint. This is because
-% the KKT conditions are that the inequality and equality constraints are met and also
-% $\sum_{1}^{n}(dfx_{n} - \sum_{1}^{m}\lambda_{m}*dg_{m}x_{n})$ where m is the number of
-% constraints and n is the number of inputs.
-% The derivative of a linear constraints will always be a constant, and the
-% derivative of a quadratic will always be linear, therefore the KKT
-% system of equations will always be linear in the situations described
-% above.
-

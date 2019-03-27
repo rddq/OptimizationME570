@@ -36,8 +36,11 @@ eigenvalues = eig(laplac)
 % Positive semi-definite
 
 jacobian = [double(dg2x1), double(dg2x2)]
-y = [-1, 1];
+y = [-1, 1]
 coeff = y*laplac*y'
+
+
+
 
 % The coefficient is always greater than zero, and so we do not have a
 % constrained maximum
