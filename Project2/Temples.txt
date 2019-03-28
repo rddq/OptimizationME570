@@ -1,1 +1,164 @@
-Albuquerque	New_Mexico	1	35.167684	-106.525301Anchorage	Alaska	2	61.101627	-149.840512Atlanta	Georgia	3	33.931896	-84.362394Baton_Rouge	Louisiana	4	30.362664	-91.108385Billings	Montana	5	45.800505	-108.63939Birmingham	Alabama	6	33.674623	-86.821236Bismarck	North_Dakota	7	46.838889	-100.813979Boise	Idaho	8	43.593523	-116.275034Boston	Massachusetts	9	42.412002	-71.188091Bountiful	Utah	10	40.882853	-111.846812Brigham_City	Utah	11	41.505376	-112.016592Cedar_City	Utah	12	37.673079	-113.096042Chicago	Illinois	13	42.086829	-87.859501Columbia_River	Washington	14	46.226733	-119.274893Columbia	South_Carolina	15	33.959638	-80.893981Columbus	Ohio	16	39.994089	-83.113214Dallas	Texas	17	32.914288	-96.796525Denver	Colorado	18	39.568698	-104.965782Detroit	Michigan	19	42.566266	-83.229983Draper	Utah	20	40.495893	-111.840748Fort_Collins	Colorado	21	40.494269	-105.038685Fort_Lauderdale	Florida	22	26.070899	-80.355727Fresno	California	23	36.828257	-119.852911Gilbert	Arizona	24	33.291378	-111.737365Hartford	Connecticut	25	41.737552	-72.844666Houston	Texas	26	29.999729	-95.533038Idaho_Falls	Idaho	27	43.499819	-112.0415Indianapolis	Indiana	28	39.955588	-86.165741Jordan_River	Utah	29	40.566354	-111.931417Kansas_City	Missouri	30	39.220473	-94.501331Kona	Hawaii	31	19.641614	-155.985524Laie	Hawaii	32	21.647207	-157.930658Las_Vegas	Nevada	33	36.174597	-115.020052Layton		34	41.061909	-111.939665Logan	Utah	35	41.734161	-111.827943Los_Angeles	California	36	34.052801	-118.433909Louisville	Kentucky	37	38.32112	-85.488843Lubbock	Texas	38	33.528961	-101.941413Manhattan	New_York	39	40.773112	-73.981622Manti	Utah	40	39.272906	-111.63376Medford	Oregon	41	42.373324	-122.932746Memphis	Tennessee	42	35.240752	-89.839334Meridian	Idaho	43	43.671022	-116.415115Mesa	Arizona	44	33.412876	-111.819571Monicello	Utah	45	37.877917	-109.347066Mount_Timpanogos	Utah	46	40.393166	-111.770509Nashville	Tennessee	47	35.948839	-86.860329Nauvoo	Illinois	48	40.55048	-91.384378Newport_Beach	California	49	33.629627	-117.848766Oakland	California	50	37.808027	-122.19912Ogden	Utah	51	41.227786	-111.971506Oklahoma_City	Oklahoma	52	35.591846	-97.7267Oquirrh_Mountain	Utah	53	40.551145	-111.98751Orlando	Florida	54	28.507348	-81.509578Palmyra	New_York	55	43.039148	-77.237063Payson	Utah	56	40.019258	-111.749175Philadelphia	Pennsylvania	57	39.959174	-75.168072Phoenix	Arizona	58	33.698555	-112.172329Poatello		59	42.914531	-112.407092Portland	Oregon	60	45.425345	-122.742224Provo_City_Center	Utah	61	40.232667	-111.659299Provo	Utah	62	40.263666	-111.639779Raleigh	North_Carolina	63	35.732111	-78.861542Redlands	California	64	34.049037	-117.140579Reno	Nevada	65	39.534611	-119.898913Rexburg	Idaho	66	43.810922	-111.778979Richmond	Virginia	67	37.672884	-77.535372Sacramento	California	68	38.635116	-121.193925Salt_Lake_City	Utah	69	40.770468	-111.891958San_Antonio	Texas	70	29.641481	-98.488789San_Diego	California	71	32.866389	-117.228769Seattle	Washington	72	47.58407	-122.140876Snowflake	Arizona	73	34.502494	-110.111607Spokane	Washington	74	47.620163	-117.22069St._George	Utah	75	37.100535	-113.578041St._Louis	Missouri	76	38.639651	-90.464685St._Paul	Minnesota	77	44.980261	-92.965199Star_Valley	Wyoming	78	42.712073	-110.932532The_Gila_Valley	Arizona	79	32.862971	-109.789974Tuscon	Arizona	80	32.338454	-110.949174Twin_Falls	Idaho	81	42.586827	-114.441509Vernal	Utah	82	40.453205	-109.537413Washington_D.C.	Washington_D.C.	83	39.014079	-77.065624Winter_Quarters	Nebraska	84	41.334075	-95.96619Yuba_City	California	85	39.169094	-121.638497																																																																																																																																																																																																																																																																																																																								
+City State number lat long
+Albuquerque	New_Mexico	1	35.167684	-106.525301
+Anchorage	Alaska	2	61.101627	-149.840512
+Atlanta	Georgia	3	33.931896	-84.362394
+Baton_Rouge	Louisiana	4	30.362664	-91.108385
+Billings	Montana	5	45.800505	-108.63939
+Birmingham	Alabama	6	33.674623	-86.821236
+Bismarck	North_Dakota	7	46.838889	-100.813979
+Boise	Idaho	8	43.593523	-116.275034
+Boston	Massachusetts	9	42.412002	-71.188091
+Bountiful	Utah	10	40.882853	-111.846812
+Brigham_City	Utah	11	41.505376	-112.016592
+Cedar_City	Utah	12	37.673079	-113.096042
+Chicago	Illinois	13	42.086829	-87.859501
+Columbia_River	Washington	14	46.226733	-119.274893
+Columbia	South_Carolina	15	33.959638	-80.893981
+Columbus	Ohio	16	39.994089	-83.113214
+Dallas	Texas	17	32.914288	-96.796525
+Denver	Colorado	18	39.568698	-104.965782
+Detroit	Michigan	19	42.566266	-83.229983
+Draper	Utah	20	40.495893	-111.840748
+Fort_Collins	Colorado	21	40.494269	-105.038685
+Fort_Lauderdale	Florida	22	26.070899	-80.355727
+Fresno	California	23	36.828257	-119.852911
+Gilbert	Arizona	24	33.291378	-111.737365
+Hartford	Connecticut	25	41.737552	-72.844666
+Houston	Texas	26	29.999729	-95.533038
+Idaho_Falls	Idaho	27	43.499819	-112.0415
+Indianapolis	Indiana	28	39.955588	-86.165741
+Jordan_River	Utah	29	40.566354	-111.931417
+Kansas_City	Missouri	30	39.220473	-94.501331
+Kona	Hawaii	31	19.641614	-155.985524
+Laie	Hawaii	32	21.647207	-157.930658
+Las_Vegas	Nevada	33	36.174597	-115.020052
+Layton		34	41.061909	-111.939665
+Logan	Utah	35	41.734161	-111.827943
+Los_Angeles	California	36	34.052801	-118.433909
+Louisville	Kentucky	37	38.32112	-85.488843
+Lubbock	Texas	38	33.528961	-101.941413
+Manhattan	New_York	39	40.773112	-73.981622
+Manti	Utah	40	39.272906	-111.63376
+Medford	Oregon	41	42.373324	-122.932746
+Memphis	Tennessee	42	35.240752	-89.839334
+Meridian	Idaho	43	43.671022	-116.415115
+Mesa	Arizona	44	33.412876	-111.819571
+Monicello	Utah	45	37.877917	-109.347066
+Mount_Timpanogos	Utah	46	40.393166	-111.770509
+Nashville	Tennessee	47	35.948839	-86.860329
+Nauvoo	Illinois	48	40.55048	-91.384378
+Newport_Beach	California	49	33.629627	-117.848766
+Oakland	California	50	37.808027	-122.19912
+Ogden	Utah	51	41.227786	-111.971506
+Oklahoma_City	Oklahoma	52	35.591846	-97.7267
+Oquirrh_Mountain	Utah	53	40.551145	-111.98751
+Orlando	Florida	54	28.507348	-81.509578
+Palmyra	New_York	55	43.039148	-77.237063
+Payson	Utah	56	40.019258	-111.749175
+Philadelphia	Pennsylvania	57	39.959174	-75.168072
+Phoenix	Arizona	58	33.698555	-112.172329
+Poatello		59	42.914531	-112.407092
+Portland	Oregon	60	45.425345	-122.742224
+Provo_City_Center	Utah	61	40.232667	-111.659299
+Provo	Utah	62	40.263666	-111.639779
+Raleigh	North_Carolina	63	35.732111	-78.861542
+Redlands	California	64	34.049037	-117.140579
+Reno	Nevada	65	39.534611	-119.898913
+Rexburg	Idaho	66	43.810922	-111.778979
+Richmond	Virginia	67	37.672884	-77.535372
+Sacramento	California	68	38.635116	-121.193925
+Salt_Lake_City	Utah	69	40.770468	-111.891958
+San_Antonio	Texas	70	29.641481	-98.488789
+San_Diego	California	71	32.866389	-117.228769
+Seattle	Washington	72	47.58407	-122.140876
+Snowflake	Arizona	73	34.502494	-110.111607
+Spokane	Washington	74	47.620163	-117.22069
+St._George	Utah	75	37.100535	-113.578041
+St._Louis	Missouri	76	38.639651	-90.464685
+St._Paul	Minnesota	77	44.980261	-92.965199
+Star_Valley	Wyoming	78	42.712073	-110.932532
+The_Gila_Valley	Arizona	79	32.862971	-109.789974
+Tuscon	Arizona	80	32.338454	-110.949174
+Twin_Falls	Idaho	81	42.586827	-114.441509
+Vernal	Utah	82	40.453205	-109.537413
+Washington_D.C.	Washington_D.C.	83	39.014079	-77.065624
+Winter_Quarters	Nebraska	84	41.334075	-95.96619
+Yuba_City	California	85	39.169094	-121.638497
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
