@@ -29,4 +29,4 @@ def _make_path_visualization_url_graphhopper(lats,longs):
 url_string = _make_path_visualization_url_graphhopper(lat_coords, long_coords)
 webbrowser.open_new_tab(url_string)
 #webbrowser.open_new_tab('https://map.project-osrm.org/?z=9&center=39.013849%2C-78.689575&loc=38.904793%2C-77.055960&loc=38.922491%2C-77.036640&loc=38.904793%2C-79.055961&hl=en&alt=0')
-'https://graphhopper.com/maps/?point=36.686041%2C-6.122131&point=37.38107%2C-5.990295&point=37.872685%2C-4.777679&point=Granada%2C%20Spain&locale=nl-NL&vehicle=car&weighting=fastest&elevation=true&use_miles=false&layer=Omniscale'
+#'https://graphhopper.com/maps/?point=36.686041%2C-6.122131&point=37.38107%2C-5.990295&point=37.872685%2C-4.777679&point=Granada%2C%20Spain&locale=nl-NL&vehicle=car&weighting=fastest&elevation=true&use_miles=false&layer=Omniscale'
