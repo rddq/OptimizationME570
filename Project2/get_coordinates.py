@@ -36,24 +36,11 @@ for index in range(lat_coords.size):
             all_time[index].append(time)
             all_distances[index].append(distance)
         else:
-            print("The distance between templse: " + str(index)+ " " +str(index1) + " Did not work")
+            print("No path found between temples: " +str(index)+ " " +str(index1))
             all_time[index].append(None)
             all_distances[index].append(None)
+
 time_csv = pd.DataFrame(data=all_time)
 distance_csv = pd.DataFrame(data=all_distances)
-time_csv.to_csv('time_between_locations')
-distance_csv.to_csv('distance_between_locations')
-
-def _make_path_visualization_url(lats, longs):
-    url = 'https://map.project-osrm.org/?z=9&center=' + str(lats[0]) + '%2C' + str(longs[0]) + '&'
-    for index in range(lats.size):
-        if index != (1 or 7) and index != 8:
-            url += 'loc=' + str(lats[index]) + '%2C' + str(longs[index]) + '&'
-        if index == 8:
-            break 
-    url += 'hl=en&alt=0'
-    return url
-
-url_string = _make_path_visualization_url(lat_coords, long_coords)
-webbrowser.open_new_tab(url_string)
-#webbrowser.open_new_tab('https://map.project-osrm.org/?z=9&center=39.013849%2C-78.689575&loc=38.904793%2C-77.055960&loc=38.922491%2C-77.036640&loc=38.904793%2C-79.055961&hl=en&alt=0')
+time_csv.to_csv('time_between_locations.csv')
+distance_csv.to_csv('distance_between_locations.csv')
