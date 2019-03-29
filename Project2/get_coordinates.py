@@ -17,7 +17,11 @@ temples = pd.read_csv(filename, delim_whitespace=True)
 lat_coords = temples['lat']
 long_coords = temples['long'] # long is negative in the US
 
+all_time = []
+all_distances = []
 for index in range(lat_coords.size):
+    all_time.append([])
+    all_distances.append([])
     for index1 in range(lat_coords.size):
         temple1 = (lat_coords[index], long_coords[index])
         temple2 = (lat_coords[index1], long_coords[index1])
@@ -29,11 +33,16 @@ for index in range(lat_coords.size):
             route = data_dict['routes'][0]
             distance = route['distance'] # in meters
             time = route['duration'] # in seconds
-            
-        time.sleep(0.1)
-
-print(str(distance))
-print(str(time))
+            all_time[index].append(time)
+            all_distances[index].append(distance)
+        else:
+            print("The distance between templse: " + str(index)+ " " +str(index1) + " Did not work")
+            all_time[index].append(None)
+            all_distances[index].append(None)
+time_csv = pd.DataFrame(data=all_time)
+distance_csv = pd.DataFrame(data=all_distances)
+time_csv.to_csv('time_between_locations')
+distance_csv.to_csv('distance_between_locations')
 
 def _make_path_visualization_url(lats, longs):
     url = 'https://map.project-osrm.org/?z=9&center=' + str(lats[0]) + '%2C' + str(longs[0]) + '&'

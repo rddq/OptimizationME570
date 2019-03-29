@@ -32,7 +32,7 @@ Kansas_City	Missouri	30	39.220473	-94.501331
 Kona	Hawaii	31	19.641614	-155.985524
 Laie	Hawaii	32	21.647207	-157.930658
 Las_Vegas	Nevada	33	36.174597	-115.020052
-Layton		34	41.061909	-111.939665
+Layton	Utah	34	41.061909	-111.939665
 Logan	Utah	35	41.734161	-111.827943
 Los_Angeles	California	36	34.052801	-118.433909
 Louisville	Kentucky	37	38.32112	-85.488843
@@ -57,7 +57,7 @@ Palmyra	New_York	55	43.039148	-77.237063
 Payson	Utah	56	40.019258	-111.749175
 Philadelphia	Pennsylvania	57	39.959174	-75.168072
 Phoenix	Arizona	58	33.698555	-112.172329
-Poatello		59	42.914531	-112.407092
+Pocatello Idaho 59	42.914531	-112.407092
 Portland	Oregon	60	45.425345	-122.742224
 Provo_City_Center	Utah	61	40.232667	-111.659299
 Provo	Utah	62	40.263666	-111.639779
