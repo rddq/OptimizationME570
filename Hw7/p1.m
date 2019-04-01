@@ -8,16 +8,21 @@ dfx2 = diff(f,x2);
 dgx1 = diff(g,x1);
 dgx2 = diff(g,x2);
 % Starting point
-xn = [-1, 4];
+xn = [0.2533, -0.1583];
 hesslagrange = [1, 0; 0, 1];
 fn = f(xn(1), xn(2));
 
-[hl_1,xnew,P] = takeStepSQP(f,g,dfx1,dfx2,dgx1,dgx2,xn,hesslagrange,fn)
+x3 = [-0.3566, -0.0109];
+hesslagrange = [5.4616,1.8157; 1.8157, 1.9805];
+Pprev = 5.85;
+% Step to calculate the hessian of the lagrange
+[hl_l, xnew, P] = takeStepSQP(f,g,dfx1,dfx2,dgx1,dgx2,x3,hesslagrange,Pprev)
 
+% First step
+[hl_l, xnew, P] = takeStepSQP(f,g,dfx1,dfx2,dgx1,dgx2,xnew,hl_l,P)
 
-[hl_2,xnew,P] = takeStepSQP_noCon(f,dfx1,dfx2,xnew,hl_1,P)
-
-takeStepSQP(f,g,dfx1,dfx2,dgx1,dgx2,xn,hesslagrange,Pprev)
+% Second Step
+[hl_l, xnew, P] = takeStepSQP(f,g,dfx1,dfx2,dgx1,dgx2,xnew,hl_l,P)
 
 function [hl_1, xnew, P] = takeStepSQP(f,g,dfx1,dfx2,dgx1,dgx2,xn,hesslagrange,Pprev)
     syms cx1 cx2 lambda
