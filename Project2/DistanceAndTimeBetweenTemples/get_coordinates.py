@@ -12,8 +12,8 @@ def _make_request_url(temple1, temple2):
 filename = 'Temple.txt'
 temples = pd.read_csv(filename, delimiter='\t', header=None)
 
-lat_coords = temples.values[3]
-long_coords = temples.values[4] # long is negative in the US
+lat_coords = temples.values[:,3]
+long_coords = temples.values[:,4] # long is negative in the US
 
 all_time = []
 all_distances = []
