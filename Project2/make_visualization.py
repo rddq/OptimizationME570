@@ -1,11 +1,12 @@
 import pandas as pd
 import webbrowser
 
-filename = 'Project2/temples.txt'
-temples = pd.read_csv(filename, delim_whitespace=True)
+filename = 'Temple.txt'
+columns = ["temple name", "location","index","lat","long" ]
+temples = pd.read_csv(filename, delimiter='\t', names=columns)
 
-lat_coords = temples['lat']
-long_coords = temples['long'] # long is negative in the US
+lat_coords = temples.values[:,3]
+long_coords = temples.values[:,4] # long is negative in the US
 
 
 def _make_path_visualization_url_osrm(lats, longs):

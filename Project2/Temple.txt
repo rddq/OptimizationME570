@@ -1,1 +1,72 @@
-Albuquerque New Mexico Temple	New Mexico	1	35.167684	-106.525301Anchorage Alaska Temple	Alaska	2	61.101627	-149.840512Atlanta Georgia Temple	Georgia	3	33.931896	-84.362394Billings Montana Temple	Montana	4	45.800505	-108.63939Birmingham Alabama Temple	Alabama	5	33.674623	-86.821236Bismarck North Dakota Temple	North Dakota	6	46.838889	-100.813979Boise Idaho Temple	Idaho	7	43.593523	-116.275034Boston Massachusetts Temple	Massachusetts	8	42.412002	-71.188091Bountiful Utah Temple	Utah	9	40.882853	-111.846812Brigham City Utah Temple	Utah	10	41.505376	-112.016592Cedar City Utah Temple	Utah	11	37.673079	-113.096042Chicago Illinois Temple	Illinois	12	42.086829	-87.859501Columbia River Washington Temple	Washington	13	46.226733	-119.274893Columbia South Carolina Temple	South Carolina	14	33.959638	-80.893981Columbus Ohio Temple	Ohio	15	39.994089	-83.113214Dallas Texas Temple	Texas	16	32.914288	-96.796525Denver Colorado Temple	Colorado	17	39.568698	-104.965782Detroit Michigan Temple	Michigan	18	42.566266	-83.229983Draper Utah Temple	Utah	19	40.495893	-111.840748Fort Collins Colorado Temple	Colorado	20	40.494269	-105.038685Fort Lauderdale Florida Temple	Florida	21	26.070899	-80.355727Fresno California Temple	California	22	36.828257	-119.852911Gilbert Arizona Temple	Arizona	23	33.291378	-111.737365Hartford Connecticut Temple	Connecticut	24	41.737552	-72.844666Houston Texas Temple	Texas	25	29.999729	-95.533038Idaho Falls Idaho Temple	Idaho	26	43.499819	-112.0415Indianapolis Indiana Temple	Indiana	27	39.955588	-86.165741Jordan River Utah Temple	Utah	28	40.566354	-111.931417Kansas City Missouri Temple	Missouri	29	39.220473	-94.501331Las Vegas Nevada Temple	Nevada	30	36.174597	-115.020052Logan Utah Temple	Utah	31	41.734161	-111.827943Los Angeles California Temple	California	32	34.052801	-118.433909Louisville Kentucky Temple	Kentucky	33	38.32112	-85.488843Lubbock Texas Temple	Texas	34	33.528961	-101.941413Manhattan New York Temple	New York	35	40.773112	-73.981622Manti Utah Temple	Utah	36	39.272906	-111.63376Medford Oregon Temple	Oregon	37	42.373324	-122.932746Meridian Idaho Temple	Idaho	38	43.671022	-116.415115Monticello Utah Temple	Utah	39	37.877917	-109.347066Mount Timpanogos Utah Temple	Utah	40	40.393166	-111.770509Nashville Tennessee Temple	Tennessee	41	35.948839	-86.860329Nauvoo Illinois Temple	Illinois	42	40.55048	-91.384378Newport Beach California Temple	California	43	33.629627	-117.848766Ogden Utah Temple	Utah	44	41.227786	-111.971506Oquirrh Mountain Utah Temple	Utah	45	40.551145	-111.98751Orlando Florida Temple	Florida	46	28.507348	-81.509578Palmyra New York Temple	New York	47	43.039148	-77.237063Payson Utah Temple	Utah	48	40.019258	-111.749175Philadelphia Pennsylvania Temple	Pennsylvania	49	39.959174	-75.168072Phoenix Arizona Temple	Arizona	50	33.698555	-112.172329Portland Oregon Temple	Oregon	51	45.425345	-122.742224Provo City Center Temple	Utah	52	40.232667	-111.659299Provo Utah Temple	Utah	53	40.263666	-111.639779Redlands California Temple	California	54	34.049037	-117.140579Reno Nevada Temple	Nevada	55	39.534611	-119.898913Rexburg Idaho Temple	Idaho	56	43.810922	-111.778979Sacramento California Temple	California	57	38.635116	-121.193925Salt Lake Temple	Utah	58	40.770468	-111.891958San Antonio Texas Temple	Texas	59	29.641481	-98.488789San Diego California Temple	California	60	32.866389	-117.228769Seattle Washington Temple	Washington	61	47.58407	-122.140876Snowflake Arizona Temple	Arizona	62	34.502494	-110.111607Spokane Washington Temple	Washington	63	47.620163	-117.22069St. George Utah Temple	Utah	64	37.100535	-113.578041St. Louis Missouri Temple	Missouri	65	38.639651	-90.464685St. Paul Minnesota Temple	Minnesota	66	44.980261	-92.965199Star Valley Wyoming Temple	Wyoming	67	42.712073	-110.932532The Gila Valley Arizona Temple	Arizona	68	32.862971	-109.789974Tucson Arizona Temple	Arizona	69	32.338454	-110.949174Twin Falls Idaho Temple	Idaho	70	42.586827	-114.441509Vernal Utah Temple	Utah	71	40.453205	-109.537413Winter Quarters Nebraska Temple	Nebraska	72	41.334075	-95.96619																																																																																																																																																																																																																																																																																																																								
+Albuquerque New Mexico Temple	New Mexico	1	35.167684	-106.525301
+Anchorage Alaska Temple	Alaska	2	61.101627	-149.840512
+Atlanta Georgia Temple	Georgia	3	33.931896	-84.362394
+Billings Montana Temple	Montana	4	45.800505	-108.63939
+Birmingham Alabama Temple	Alabama	5	33.674623	-86.821236
+Bismarck North Dakota Temple	North Dakota	6	46.838889	-100.813979
+Boise Idaho Temple	Idaho	7	43.593523	-116.275034
+Boston Massachusetts Temple	Massachusetts	8	42.412002	-71.188091
+Bountiful Utah Temple	Utah	9	40.882853	-111.846812
+Brigham City Utah Temple	Utah	10	41.505376	-112.016592
+Cedar City Utah Temple	Utah	11	37.673079	-113.096042
+Chicago Illinois Temple	Illinois	12	42.086829	-87.859501
+Columbia River Washington Temple	Washington	13	46.226733	-119.274893
+Columbia South Carolina Temple	South Carolina	14	33.959638	-80.893981
+Columbus Ohio Temple	Ohio	15	39.994089	-83.113214
+Dallas Texas Temple	Texas	16	32.914288	-96.796525
+Denver Colorado Temple	Colorado	17	39.568698	-104.965782
+Detroit Michigan Temple	Michigan	18	42.566266	-83.229983
+Draper Utah Temple	Utah	19	40.495893	-111.840748
+Fort Collins Colorado Temple	Colorado	20	40.494269	-105.038685
+Fort Lauderdale Florida Temple	Florida	21	26.070899	-80.355727
+Fresno California Temple	California	22	36.828257	-119.852911
+Gilbert Arizona Temple	Arizona	23	33.291378	-111.737365
+Hartford Connecticut Temple	Connecticut	24	41.737552	-72.844666
+Houston Texas Temple	Texas	25	29.999729	-95.533038
+Idaho Falls Idaho Temple	Idaho	26	43.499819	-112.0415
+Indianapolis Indiana Temple	Indiana	27	39.955588	-86.165741
+Jordan River Utah Temple	Utah	28	40.566354	-111.931417
+Kansas City Missouri Temple	Missouri	29	39.220473	-94.501331
+Las Vegas Nevada Temple	Nevada	30	36.174597	-115.020052
+Logan Utah Temple	Utah	31	41.734161	-111.827943
+Los Angeles California Temple	California	32	34.052801	-118.433909
+Louisville Kentucky Temple	Kentucky	33	38.32112	-85.488843
+Lubbock Texas Temple	Texas	34	33.528961	-101.941413
+Manhattan New York Temple	New York	35	40.773112	-73.981622
+Manti Utah Temple	Utah	36	39.272906	-111.63376
+Medford Oregon Temple	Oregon	37	42.373324	-122.932746
+Meridian Idaho Temple	Idaho	38	43.671022	-116.415115
+Monticello Utah Temple	Utah	39	37.877917	-109.347066
+Mount Timpanogos Utah Temple	Utah	40	40.393166	-111.770509
+Nashville Tennessee Temple	Tennessee	41	35.948839	-86.860329
+Nauvoo Illinois Temple	Illinois	42	40.55048	-91.384378
+Newport Beach California Temple	California	43	33.629627	-117.848766
+Ogden Utah Temple	Utah	44	41.227786	-111.971506
+Oquirrh Mountain Utah Temple	Utah	45	40.551145	-111.98751
+Orlando Florida Temple	Florida	46	28.507348	-81.509578
+Palmyra New York Temple	New York	47	43.039148	-77.237063
+Payson Utah Temple	Utah	48	40.019258	-111.749175
+Philadelphia Pennsylvania Temple	Pennsylvania	49	39.959174	-75.168072
+Phoenix Arizona Temple	Arizona	50	33.698555	-112.172329
+Portland Oregon Temple	Oregon	51	45.425345	-122.742224
+Provo City Center Temple	Utah	52	40.232667	-111.659299
+Provo Utah Temple	Utah	53	40.263666	-111.639779
+Redlands California Temple	California	54	34.049037	-117.140579
+Reno Nevada Temple	Nevada	55	39.534611	-119.898913
+Rexburg Idaho Temple	Idaho	56	43.810922	-111.778979
+Sacramento California Temple	California	57	38.635116	-121.193925
+Salt Lake Temple	Utah	58	40.770468	-111.891958
+San Antonio Texas Temple	Texas	59	29.641481	-98.488789
+San Diego California Temple	California	60	32.866389	-117.228769
+Seattle Washington Temple	Washington	61	47.58407	-122.140876
+Snowflake Arizona Temple	Arizona	62	34.502494	-110.111607
+Spokane Washington Temple	Washington	63	47.620163	-117.22069
+St. George Utah Temple	Utah	64	37.100535	-113.578041
+St. Louis Missouri Temple	Missouri	65	38.639651	-90.464685
+St. Paul Minnesota Temple	Minnesota	66	44.980261	-92.965199
+Star Valley Wyoming Temple	Wyoming	67	42.712073	-110.932532
+The Gila Valley Arizona Temple	Arizona	68	32.862971	-109.789974
+Tucson Arizona Temple	Arizona	69	32.338454	-110.949174
+Twin Falls Idaho Temple	Idaho	70	42.586827	-114.441509
+Vernal Utah Temple	Utah	71	40.453205	-109.537413
+Winter Quarters Nebraska Temple	Nebraska	72	41.334075	-95.96619
