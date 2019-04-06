@@ -43,7 +43,7 @@ function [time] = fitnessOfPath(path)
             schedule = string(schedule);       
             if ~isempty(schedule)          
                 foundSession = 0;
-                [~,numberSessionsToday] = size(schedule);
+                [numberSessionsToday,~] = size(schedule);
                 for index = 1:numberSessionsToday
                     session = schedule(index);
                     tsess = getSessionDateTime(session, j, date, 0);
@@ -105,7 +105,6 @@ function sesTime = getSessionDateTime(session, templeIndex, date, extradays)
     if extradays ~= 0
         Day = Day + extradays;
     end
-    
     sesTime = datetime(Year,Month,Day,Hour,Minute,0,'TimeZone',timezones(templeIndex),...
             'Format','d-MMM-y HH:mm:ss Z');
 end
@@ -116,7 +115,6 @@ total_time = zeros(1,m);
 for i=1:m
     gen_time = 0;
     path = generation(:,i);
-    total_time(i) = fitnessOfPath(path);
+    total_time(i) = days(fitnessOfPath(path));
 end
-total_time
 end
