@@ -11,11 +11,11 @@ def _make_request_url(temple1, temple2):
     request = 'http://router.project-osrm.org/route/v1/driving/' + str(long1) + ',' + str(lat1) + ';'+ str(long2) + ',' + str(lat2) + '?overview=false'
     return request
 
-filename = 'Project2/temples.txt'
-temples = pd.read_csv(filename, delim_whitespace=True)
+filename = 'Temple.txt'
+temples = pd.read_csv(filename, delimiter='\t', header=None)
 
-lat_coords = temples['lat']
-long_coords = temples['long'] # long is negative in the US
+lat_coords = temples.values[3]
+long_coords = temples.values[4] # long is negative in the US
 
 all_time = []
 all_distances = []

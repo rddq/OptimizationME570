@@ -6,7 +6,7 @@ import pandas as pd
 from copy import copy
 import json 
 
-data = pd.read_csv("Temple.txt", header=None,delimiter='\t')
+data = pd.read_csv("Temple.txt", header=None, delimiter='\t')
 all_names = data[0].values
 
 browser = webdriver.Chrome()
@@ -68,6 +68,6 @@ for index, temple in enumerate(temple_links):
             browser.switch_to_window(main_window)
                        
 
-with open('data.json', 'w') as outfile:
+with open('templeEndowmentSchedules.json', 'w') as outfile:
     json.dump(all_dicts, outfile)
 browser.quit()

@@ -1,4 +1,3 @@
-temples = fopen('Temple.txt');
-tline = fgetl(temples)
-tline1 = strsplit(tline,'\t')
-hai = 0
+fname = 'templeEndowmentSchedules.json';
+val = jsondecode(fileread(fname));
+hai = 1
