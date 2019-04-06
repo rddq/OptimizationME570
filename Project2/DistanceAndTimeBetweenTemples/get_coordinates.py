@@ -2,8 +2,6 @@ import requests
 import json
 from collections import namedtuple
 import pandas as pd
-import webbrowser
-import time
 
 def _make_request_url(temple1, temple2):
     (lat1, long1) = temple1
