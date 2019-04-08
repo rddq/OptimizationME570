@@ -78,7 +78,7 @@ for gen in range(num_gen):
         for j in range(num_temples): #Iterate through the genes of the children. 
             if np.random.rand(1) < mutat_percent:
                 #Child gene swap and chromosome repair
-                original_value = children[j][0]
+                original_value = np.copy(children[j][0])
                 mutated_value = np.random.randint(0,num_temples)
                 gene_loc_1 = np.argwhere(children[:,0]==mutated_value).flatten()[0]
                 children[gene_loc_1][0] = original_value
@@ -87,7 +87,7 @@ for gen in range(num_gen):
         for j in range(num_temples): #Iterate through the genes of the children. 
             if np.random.rand(1) < mutat_percent:
                 #Child gene swap and chromosome repair
-                original_value = children[j][1]
+                original_value = np.copy(children[j][1])
                 mutated_value = np.random.randint(0,num_temples)
                 gene_loc_2 = np.argwhere(children[:,1]==mutated_value).flatten()[0]
                 children[gene_loc_1][1] = original_value
