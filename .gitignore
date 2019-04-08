@@ -281,3 +281,6 @@ octave-workspace
 # Simulink autosave extension
 .autosave
 .vscode/
+
+*__pycache__/
+*.pyc
