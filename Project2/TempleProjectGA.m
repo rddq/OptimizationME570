@@ -1,11 +1,13 @@
 clear all
 close all
 clc
+pyversion /Users/ryandd/anaconda/envs/controlsclass/bin/python
 
 %%%% TODO:
 % - Change first temple location to Provo city center
 % - Add some sort of penalty function
 profile on
+fitnesspy = py.importlib.import_module('fitness_all');
 %Load in temple data
 w = importdata('Temple.txt'); % Read in Datafile
 x = importdata('DistanceAndTimeBetweenTemples/timeBetweenLocations.txt');
@@ -38,9 +40,9 @@ mutat_percent = .05; %Mutation percentage
 %Increasing this actually tends to decrease the efficacy of the
 %optimization (makes the optimal distance larger). 
 global num_gen
-num_gen = 2;     %Number of generations (Basically the number of iterations)
+num_gen = 100;     %Number of generations (Basically the number of iterations)
 global gen_size
-gen_size = 10; %Must be even number
+gen_size = 20; %Must be even number
 tourny_size = floor(gen_size/3);
 
 old_gen = uint8(zeros(length(temple_name),gen_size));
@@ -59,7 +61,7 @@ initial_fit = fitness(old_gen);
 for gen=1:num_gen
     tic
     %Child Generation For loop
-    old_fit = fitness(old_gen);
+    old_fit = fitnesspy.fitness(old_gen.');
     for i=1:2:(gen_size)    %Only odds so storage of children is easy
         %Select Parents (By fitness) (Tournament Style)
         for j=1:2
@@ -147,12 +149,13 @@ for gen=1:num_gen
     end
     %Elitism (Pick top N)
     current_gen = [old_gen, new_gen];   %Concantonate together for fitness function
-    current_fit = fitness(current_gen);  
+    toc
+    current_fit = fitnesspy.fitness(current_gen);  
     [~,winners] = mink(current_fit,gen_size); %Determine winning generation's index
     old_gen = current_gen(:,winners);   %Place winning generation as surviving gen. 
 end
 final_gen = old_gen;
-final_fit = fitness(old_gen);
+final_fit = fitnesspy.fitness(old_gen);
 [f_opt,I] = min(final_fit);
 x_opt = final_gen(:,I)
 profile viewer

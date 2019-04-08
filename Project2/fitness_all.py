@@ -5,7 +5,6 @@ import time
 import numpy as np
 import json
 import pandas as pd 
-from multiprocessing import Pool
 
 def fitness(generation):
     sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
@@ -24,11 +23,11 @@ def fitness(generation):
     daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
     
     m = len(generation)
-    total_time = np.zeros((m,1))
+    total_time = []
     for i in range(m):
         gen_time = 0
-        path = generation
-        total_time[i] = fitnessOfPath(path,sessions,travel_time,daysotw,timezones)
+        path = generation[i]
+        total_time.append(fitnessOfPath(path,sessions,travel_time,daysotw,timezones))  
     return total_time
 
 def getSessionDateTime(session, templeIndex, date, extradays, timezones):
@@ -114,13 +113,13 @@ def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
     finaltime = finaldelta.days*24*60*60+finaldelta.seconds
     return finaltime
 
-start_time = time.time()
+# start_time = time.time()
 
-generation = np.array(list(range(0,72)))
-generation = generation.T
-total_days = fitness(generation)
-end_time = time.time()
-print(total_days)
-print (end_time-start_time)
+# generation = np.array(list(range(0,72)))
+# generation = generation.T
+# total_days = fitness(generation)
+# print(total_days)
+# end_time = time.time()
+# print (end_time-start_time)
 
      
