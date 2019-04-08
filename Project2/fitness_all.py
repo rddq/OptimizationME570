@@ -26,7 +26,7 @@ def fitness(generation):
     total_time = []
     for i in range(m):
         gen_time = 0
-        path = generation[i]
+        path = generation
         total_time.append(fitnessOfPath(path,sessions,travel_time,daysotw,timezones))  
     return total_time
 
@@ -53,7 +53,6 @@ def getSessionDateTime(session, templeIndex, date, extradays, timezones):
     return sesTime
 
 def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
-    now = pytz.utc.localize(datetime.utcnow())
     MDT = pytz.timezone("America/Denver")
     startDate = MDT.localize(datetime(2019,4,16,7,40,0,0))
     date = startDate
@@ -73,9 +72,7 @@ def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
                      session = schedule[index]
                      tsess = getSessionDateTime(session, j, date, 0, timezones)
                      difference = tsess-date
-                     minutesDiffdaysmin = difference.days*24*60
-                     minutesDiffsecondmin = difference.seconds/60
-                     diff = minutesDiffdaysmin+minutesDiffsecondmin
+                     diff = difference.total_seconds()
                      if diff > 20:
                         date = date + difference + timedelta(hours=2)
                         foundSession = 1
@@ -110,16 +107,16 @@ def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
             date = date + difference + timedelta(hours=2)
             break
     finaldelta = date-startDate
-    finaltime = finaldelta.days*24*60*60+finaldelta.seconds
+    finaltime = finaldelta.total_seconds()
     return finaltime
 
-# start_time = time.time()
-
-# generation = np.array(list(range(0,72)))
-# generation = generation.T
-# total_days = fitness(generation)
-# print(total_days)
-# end_time = time.time()
-# print (end_time-start_time)
+if __name__ == "__main__":
+    start_time = time.time()
+    generation = np.array(list(range(0,72)))
+    generation = generation.T
+    total_days = fitness(generation)
+    print(total_days)
+    end_time = time.time()
+    print (end_time-start_time)
 
      
