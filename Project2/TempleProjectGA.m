@@ -1,7 +1,7 @@
 clear all
 close all
 clc
-pyversion /Users/ryandd/anaconda/envs/controlsclass/bin/python
+%pyversion /Users/ryandd/anaconda/envs/controlsclass/bin/python
 
 %%%% TODO:
 % - Change first temple location to Provo city center
@@ -61,7 +61,7 @@ initial_fit = fitness(old_gen);
 for gen=1:num_gen
     tic
     %Child Generation For loop
-    old_fit = fitnesspy.fitness(old_gen.');
+    old_fit = fitness(old_gen.');
     for i=1:2:(gen_size)    %Only odds so storage of children is easy
         %Select Parents (By fitness) (Tournament Style)
         for j=1:2
@@ -150,7 +150,7 @@ for gen=1:num_gen
     %Elitism (Pick top N)
     current_gen = [old_gen, new_gen];   %Concantonate together for fitness function
     toc
-    current_fit = fitnesspy.fitness(current_gen);  
+    current_fit = fitness(current_gen);  
     [~,winners] = mink(current_fit,gen_size); %Determine winning generation's index
     old_gen = current_gen(:,winners);   %Place winning generation as surviving gen. 
 end

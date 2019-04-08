@@ -22,13 +22,12 @@ daysotw = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday","Satu
 
 generation = (1:1:72);
 generation = generation.';
+generation = [generation, generation];
 
 
 fitness(generation)
 
-function [time] = fitnessOfPath(path, sessions, travel_time)
-    testmat2 = py.importlib.import_module('speedTest');
-    results = testmat2.herewego(path);
+function [time] = fitnessOfPath(path, sessions, travel_time, daysotw)    
     
     startDate = datetime(2019,4,16,7,40,0,'TimeZone','local',...
     'Format','d-MMM-y HH:mm:ss Z');
@@ -120,6 +119,6 @@ for i=1:m
     global sessions
     global travel_time
     global daysotw
-    total_time(i) = days(fitnessOfPath(path));
+    total_time(i) = days(fitnessOfPath(path, sessions, travel_time, daysotw));
 end
 end
