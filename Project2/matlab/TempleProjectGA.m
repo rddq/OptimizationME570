@@ -1,21 +1,15 @@
 clear all
 close all
 clc
-%pyversion /Users/ryandd/anaconda/envs/controlsclass/bin/python
 
-%%%% TODO:
-% - Change first temple location to Provo city center
-% - Add some sort of penalty function
-profile on
-fitnesspy = py.importlib.import_module('fitness_all');
 %Load in temple data
-w = importdata('Temple.txt'); % Read in Datafile
-x = importdata('DistanceAndTimeBetweenTemples/timeBetweenLocations.txt');
+w = importdata('../Temple.txt'); % Read in Datafile
+x = importdata('../BetweenTempleInfo/timeBetweenLocations.txt');
 temple_name = string(w.textdata(:,1)); % Pull Temple Names
 temple_state = string(w.textdata(:,2)); % Pull Temple Names
 temple_number = w.data(:,1); % Pull Number/Coords
-sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json';
-timezonesFileName = 'timezones.json';
+sessionFileName = '../TempleSchedules/templeEndowmentSchedules.json';
+timezonesFileName = '../TimeZones/timezones.json';
 
 global timezones
 timezones = jsondecode(fileread(timezonesFileName));
@@ -40,7 +34,7 @@ mutat_percent = .05; %Mutation percentage
 %Increasing this actually tends to decrease the efficacy of the
 %optimization (makes the optimal distance larger). 
 global num_gen
-num_gen = 100;     %Number of generations (Basically the number of iterations)
+num_gen = 2;     %Number of generations (Basically the number of iterations)
 global gen_size
 gen_size = 20; %Must be even number
 tourny_size = floor(gen_size/3);
@@ -149,16 +143,15 @@ for gen=1:num_gen
     end
     %Elitism (Pick top N)
     current_gen = [old_gen, new_gen];   %Concantonate together for fitness function
-    toc
     current_fit = fitness(current_gen);  
     [~,winners] = mink(current_fit,gen_size); %Determine winning generation's index
     old_gen = current_gen(:,winners);   %Place winning generation as surviving gen. 
+    toc
 end
 final_gen = old_gen;
-final_fit = fitnesspy.fitness(old_gen);
+final_fit = fitness(old_gen);
 [f_opt,I] = min(final_fit);
 x_opt = final_gen(:,I)
-profile viewer
 
 %%%%%% Functions
 function rad = radians(degree) 

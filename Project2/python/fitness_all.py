@@ -6,28 +6,15 @@ import numpy as np
 import json
 import pandas as pd 
 
-def fitness(generation):
-    sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
-    with open(sessionFileName, 'r') as file1:
-        sessions = json.load(file1)
-
-    timezonesFileName = 'timezones.json'
-    with open(timezonesFileName, 'r') as file2:
-        timezones = json.load(file2)
-    timezones = [pytz.timezone(t) for t in timezones]
-
-    timefilename = 'DistanceAndTimeBetweenTemples/timeBetweenLocations.txt'
-    travel_time = pd.read_csv(timefilename, delimiter='\t')
-    travel_time = travel_time.values
-    travel_time = np.delete(travel_time,0,1)
-    daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
-    
-    m = len(generation)
+def fitness(generation,sessions,travel_time,daysotw,timezones):
+    m = np.size(generation,1)
     total_time = []
     for i in range(m):
         gen_time = 0
-        path = generation
-        total_time.append(fitnessOfPath(path,sessions,travel_time,daysotw,timezones))  
+        path = generation.astype(int)
+        path = path[:,i]
+        fitness_path = fitnessOfPath(path,sessions,travel_time,daysotw,timezones)
+        total_time.append(fitness_path)  
     return total_time
 
 def getSessionDateTime(session, templeIndex, date, extradays, timezones):
@@ -111,10 +98,25 @@ def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
     return finaltime
 
 if __name__ == "__main__":
+
+    sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
+    with open(sessionFileName, 'r') as file1:
+        sessions = json.load(file1)
+
+    timezonesFileName = 'TimeZones/timezones.json'
+    with open(timezonesFileName, 'r') as file2:
+        timezones = json.load(file2)
+    timezones = [pytz.timezone(t) for t in timezones]
+
+    timefilename = 'BetweenTempleInfo/timeBetweenLocations.txt'
+    travel_time = pd.read_csv(timefilename, delimiter='\t')
+    travel_time = travel_time.values
+    travel_time = np.delete(travel_time,0,1)
+    daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
     start_time = time.time()
     generation = np.array(list(range(0,72)))
     generation = generation.T
-    total_days = fitness(generation)
+    total_days = fitness(generation, sessions, travel_time, daysotw, timezones)
     print(total_days)
     end_time = time.time()
     print (end_time-start_time)
