@@ -10,22 +10,6 @@ import random
 from scipy.stats import truncnorm
 
 # TODO implement ordered crossover
-# TODO random flipping mutation from distribution
-def get_truncated_normal(mean=0, sd=2, low=-8, upp=8):
-    return truncnorm(
-        (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
-
-X = get_truncated_normal(mean=0, sd=2, low=-15, upp=15)
-
-def get_mutation_index(original_index,X):
-    offset = X.rsv()
-    result = round(offset)
-    if offset == 0:
-        if offset < 0:
-            result = -1
-        else:
-            result = 1
-    return result
 
 sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
 with open(sessionFileName, 'r') as file1:
@@ -91,23 +75,23 @@ for gen in range(num_gen):
                 children[gene_loc_2][1] = np.copy(temp2)
                 children[j][1] = np.copy(temp1)
         #Mutation (Uniform)
-        for j in range(num_temples): #Iterate through the genes of the children. 
-            if np.random.rand(1) < mutat_percent:
-                #Child gene swap and chromosome repair
-                original_value = np.copy(children[j][0])
-                mutated_value = np.random.randint(0,num_temples)
-                gene_loc_1 = np.argwhere(children[:,0]==mutated_value).flatten()[0]
-                children[gene_loc_1][0] = np.copy(original_value)
-                children[j][0] = np.copy(mutated_value)
-        #Mutation (Uniform) child 2 
-        for j in range(num_temples): #Iterate through the genes of the children. 
-            if np.random.rand(1) < mutat_percent:
-                #Child gene swap and chromosome repair
-                original_value = np.copy(children[j][1])
-                mutated_value = np.random.randint(0,num_temples)
-                gene_loc_2 = np.argwhere(children[:,1]==mutated_value).flatten()[0]
-                children[gene_loc_2][1] = np.copy(original_value)
-                children[j][1] = np.copy(mutated_value)
+        for chil in range(2):
+            for j in range(num_temples): #Iterate through the genes of the children. 
+                if np.random.rand(1) < mutat_percent:
+                    # Child gene insertion
+                    mutated_value = np.random.randint(0,num_temples)
+                    if mutated_value == children[j,chil]:
+                        continue
+                    gene_loc_mutate = np.argwhere(children[:,chil]==mutated_value).flatten()[0]
+                    child = children[:,chil]
+                    updated_child = np.insert(child,j,mutated_value)
+                    if j > gene_loc_mutate:
+                        child = np.delete(updated_child,gene_loc_mutate)
+                    else:
+                        if gene_loc_mutate == 71:
+                            hi = 0
+                        child = np.delete(updated_child,gene_loc_mutate+1)
+                    children[:,chil] = np.copy(child)
         #Store Children into new generation
         new_gen[:,2*(i+1)-2] = np.copy(children[:,0])
         new_gen[:,2*(i+1)-1] = np.copy(children[:,1])
