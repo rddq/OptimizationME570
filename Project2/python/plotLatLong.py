@@ -7,11 +7,10 @@ filename = 'Temple.txt'
 columns = ["temple name", "location","index","lat","long" ]
 temples = pd.read_csv(filename, delimiter='\t', names=columns)
 
-matlab_ind = [52,44,70,72,22,57,13,62,19,6,12,48,36,59,20,14,42,3,31,8,18,1,51,56,55,58,69,11,68,54,66,60,23,7,53,46,5,45,26,32,33,35,39,15,67,43,17,30,40,21,29,61,9,10,28,27,4,16,41,34,38,63,65,2,47,25,71,64,49,50,24,37]
-matlab_ind = [52,36,18,38,28,34,58,37,14,57,22,65,49,40,64,41,72,27,42,48,46,31,50,35,3,7,16,51,66,17,30,19,33,2,9,61,26,43,53,6,70,69,63,54,8,29,25,24,1,60,4,10,56,11,20,62,55,47,5,59,68,13,15,71,23,67,39,45,32,12,21,44]
+matlab_ind = [52,47,26,3,48,59,65,58,4,18,36,67,29,10,30,17,39,19,33,60,45,23,27,40,32,71,9,28,20,62,66,51,8,70,13,2,56,15,64,72,54,44,25,42,55,57,24,46,49,41,7,50,43,53,11,31,38,63,34,16,37,21,12,5,61,1,68,35,69,6,14,22,52]
 
-matlab_ind = matlab_ind-1
-
+matlab_ind = np.subtract(np.array(matlab_ind),1).astype(int)
+matlab_ind
 lat_coords = temples.values[:,3]
 long_coords = temples.values[:,4] # long is negative in the US
 
@@ -25,6 +24,13 @@ m = Basemap(projection='lcc', resolution=None,
 m.etopo(scale=0.5, alpha=0.5)
 
 # Map (long, lat) to (x, y) for plotting
-x, y = m(-122.3, 47.6)
-plt.plot(x, y, 'ok', markersize=5)
-plt.text(x, y, ' Seattle', fontsize=12)
+allx, ally = m(long_coords, lat_coords)
+x, y = m(long_coords[0], lat_coords[0])
+x1, y1 = m(long_coords[2], lat_coords[2])
+#x, y = m(long_coords,lat_coords)
+# plt.plot(x, y, 'ok', markersize=5)
+# plt.plot(x1, y1, 'ok', markersize=5)
+plt.plot(allx, ally)
+# plt.text(x, y, 'Provo', fontsize=12)
+# plt.text(x1, y1, 'Detroit', fontsize=12)
+plt.show()

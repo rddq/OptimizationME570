@@ -8,7 +8,6 @@ import pandas as pd
 from fitness_all import fitness
 import random
 
-
 sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
 with open(sessionFileName, 'r') as file1:
     sessions = json.load(file1)
@@ -31,7 +30,7 @@ cross_percent = .1
 mutat_percent = .02 #Mutation percentage
 # Increasing this actually tends to decrease the efficacy of the
 # optimization (makes the optimal distance larger). 
-num_gen = 600
+num_gen = 100
 gen_size = 20
 tourny_size = int(gen_size/2)
 
@@ -114,5 +113,5 @@ final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
 I = np.argmin(final_fit)
 fit_opt = final_fit[I]
 xopt = final_gen[:,I]+1
-print(xopt)
+print([float(x) for x in xopt])
 print(fit_opt)
