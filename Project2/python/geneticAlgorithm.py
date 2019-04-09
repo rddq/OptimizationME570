@@ -7,6 +7,25 @@ import json
 import pandas as pd
 from fitness_all import fitness
 import random
+from scipy.stats import truncnorm
+
+# TODO implement ordered crossover
+# TODO random flipping mutation from distribution
+def get_truncated_normal(mean=0, sd=2, low=-8, upp=8):
+    return truncnorm(
+        (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
+
+X = get_truncated_normal(mean=0, sd=2, low=-15, upp=15)
+
+def get_mutation_index(original_index,X):
+    offset = X.rsv()
+    result = round(offset)
+    if offset == 0:
+        if offset < 0:
+            result = -1
+        else:
+            result = 1
+    return result
 
 sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
 with open(sessionFileName, 'r') as file1:
@@ -24,12 +43,8 @@ travel_time = np.delete(travel_time,0,1)
 daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
 
 # Optimization Variables
-cross_percent = .1
-# I've done some fiddling around with the crossover percentage, Changing
-# this doesn't seem to have much effect on the outcome. 
-mutat_percent = .02 #Mutation percentage
-# Increasing this actually tends to decrease the efficacy of the
-# optimization (makes the optimal distance larger). 
+cross_percent = .1 
+mutat_percent = .02 #Mutation percentage 
 num_gen = 100
 gen_size = 10
 tourny_size = int(gen_size/2)
@@ -47,7 +62,7 @@ for i in range(gen_size):
 initial_gen = old_gen
 initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
 prev_fit = np.array(initial_fit)
-# %Generation For Loop
+# Generation For Loop
 for gen in range(num_gen):
     # Child Generation For loop
     old_fit = prev_fit.tolist()
