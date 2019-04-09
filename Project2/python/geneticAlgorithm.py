@@ -31,7 +31,7 @@ mutat_percent = .02 #Mutation percentage
 # Increasing this actually tends to decrease the efficacy of the
 # optimization (makes the optimal distance larger). 
 num_gen = 100
-gen_size = 20
+gen_size = 10
 tourny_size = int(gen_size/2)
 
 num_temples = len(timezones)
@@ -39,8 +39,10 @@ old_gen = np.zeros((num_temples,gen_size))
 parents = np.zeros((2,))
 children = np.zeros((num_temples,2))
 # Generate 1st Generation (Random)
+generation = np.array([52,48,36,39,62,50,23,69,68,1,34,59,25,16,5,46,21,14,3,41,49,35,24,8,47,15,33,27,18,12,65,42,29,72,66,6,20,17,71,53,40,19,45,28,58,9,44,10,31,67,4,56,26,70,7,38,63,13,61,2,51,37,55,57,22,32,43,60,54,30,64,11])
+col = np.subtract(generation,1)
 for i in range(gen_size):
-    col = np.random.permutation(num_temples)
+    #col = np.random.permutation(num_temples)
     old_gen[:,i] = np.transpose(col)
 initial_gen = old_gen
 initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
@@ -73,8 +75,6 @@ for gen in range(num_gen):
                 children[j][0] = np.copy(temp2)
                 children[gene_loc_2][1] = np.copy(temp2)
                 children[j][1] = np.copy(temp1)
-                if len(np.unique(children[:,0])) < 72 or len(np.unique(children[:,1])) < 72:
-                    h=1  
         #Mutation (Uniform)
         for j in range(num_temples): #Iterate through the genes of the children. 
             if np.random.rand(1) < mutat_percent:
@@ -84,8 +84,6 @@ for gen in range(num_gen):
                 gene_loc_1 = np.argwhere(children[:,0]==mutated_value).flatten()[0]
                 children[gene_loc_1][0] = np.copy(original_value)
                 children[j][0] = np.copy(mutated_value)
-                if len(np.unique(children[:,0])) < 72 or len(np.unique(children[:,1])) < 72:
-                    h=1
         #Mutation (Uniform) child 2 
         for j in range(num_temples): #Iterate through the genes of the children. 
             if np.random.rand(1) < mutat_percent:
@@ -95,8 +93,6 @@ for gen in range(num_gen):
                 gene_loc_2 = np.argwhere(children[:,1]==mutated_value).flatten()[0]
                 children[gene_loc_2][1] = np.copy(original_value)
                 children[j][1] = np.copy(mutated_value)
-                if len(np.unique(children[:,0])) < 72 or len(np.unique(children[:,1])) < 72:
-                    h=1
         #Store Children into new generation
         new_gen[:,2*(i+1)-2] = np.copy(children[:,0])
         new_gen[:,2*(i+1)-1] = np.copy(children[:,1])
