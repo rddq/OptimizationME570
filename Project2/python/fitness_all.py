@@ -40,10 +40,10 @@ def getSessionDateTime(session, templeIndex, date, extradays, timezones):
     return sesTime
 
 def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
-    MDT = pytz.timezone("America/Denver")
-    startDate = MDT.localize(datetime(2019,4,16,7,40,0,0))
+    timezone_start = timezones[0]
+    startDate = timezone_start.localize(datetime(2019,4,16,7,40,0,0))
     date = startDate
-    for j in range(1,len(path)):
+    for j in range(0,len(path)):
         #Travel to temple
         travelToTemple = travel_time[path[j-1]][path[j]]
         date = date + timedelta(seconds=travelToTemple)
@@ -59,7 +59,7 @@ def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
                      session = schedule[index]
                      tsess = getSessionDateTime(session, j, date, 0, timezones)
                      difference = tsess-date
-                     diff = difference.total_seconds()
+                     diff = difference.total_seconds()/60
                      if diff > 20:
                         date = date + difference + timedelta(hours=2)
                         foundSession = 1

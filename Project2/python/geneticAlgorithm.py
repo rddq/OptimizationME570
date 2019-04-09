@@ -28,28 +28,28 @@ daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sun
 cross_percent = .1
 # I've done some fiddling around with the crossover percentage, Changing
 # this doesn't seem to have much effect on the outcome. 
-mutat_percent = .05 #Mutation percentage
+mutat_percent = .02 #Mutation percentage
 # Increasing this actually tends to decrease the efficacy of the
 # optimization (makes the optimal distance larger). 
-num_gen = 1000
-gen_size = 200
+num_gen = 600
+gen_size = 20
 tourny_size = int(gen_size/2)
 
 num_temples = len(timezones)
 old_gen = np.zeros((num_temples,gen_size))
 parents = np.zeros((2,))
 children = np.zeros((num_temples,2))
-
 # Generate 1st Generation (Random)
 for i in range(gen_size):
     col = np.random.permutation(num_temples)
     old_gen[:,i] = np.transpose(col)
 initial_gen = old_gen
 initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
+prev_fit = np.array(initial_fit)
 # %Generation For Loop
 for gen in range(num_gen):
     # Child Generation For loop
-    old_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
+    old_fit = prev_fit.tolist()
     # Do a tournament
     new_gen = np.zeros((num_temples,gen_size*2))
     for i in range(int(gen_size)):
@@ -107,11 +107,12 @@ for gen in range(num_gen):
     current_gen_fit = old_fit+new_fit
     winners = np.array(current_gen_fit).argsort()[:gen_size]
     old_gen = np.copy(current_gen[:,winners])
-    print(gen)
+    prev_fit = np.copy(np.array(current_gen_fit)[winners])    
+    print(gen) 
 final_gen = old_gen
 final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
 I = np.argmin(final_fit)
 fit_opt = final_fit[I]
-xopt = final_gen[:,I]
+xopt = final_gen[:,I]+1
 print(xopt)
 print(fit_opt)
