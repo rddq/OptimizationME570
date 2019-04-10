@@ -27,11 +27,11 @@ travel_time = np.delete(travel_time,0,1)
 daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
 
 # Optimization Variables
-cross_percent = .1 
-mutat_percent = .02 #Mutation percentage 
+cross_percent = .2 
+mutat_percent = .2 #Mutation percentage 
 num_gen = 100
-gen_size = 10
-tourny_size = int(gen_size/2)
+gen_size = 30
+tourny_size = int(gen_size/3)
 
 num_temples = len(timezones)
 old_gen = np.zeros((num_temples,gen_size))
@@ -41,7 +41,7 @@ children = np.zeros((num_temples,2))
 generation = np.array([52,48,36,39,62,50,23,69,68,1,34,59,25,16,5,46,21,14,3,41,49,35,24,8,47,15,33,27,18,12,65,42,29,72,66,6,20,17,71,53,40,19,45,28,58,9,44,10,31,67,4,56,26,70,7,38,63,13,61,2,51,37,55,57,22,32,43,60,54,30,64,11])
 col = np.subtract(generation,1)
 for i in range(gen_size):
-    #col = np.random.permutation(num_temples)
+    col = np.random.permutation(num_temples)
     old_gen[:,i] = np.transpose(col)
 initial_gen = old_gen
 initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
@@ -61,19 +61,21 @@ for gen in range(num_gen):
             parents[j]= np.copy(tourny_participants[arg])    
         children[:,0] = np.copy(old_gen[:,np.copy(int(parents[0]))])
         children[:,1] = np.copy(old_gen[:,np.copy(int(parents[1]))])    
-        #Crossover (Uniform) (With chromosome repair)
+        #Ordered Crossover
+        crossover_values = []
         for j in range(num_temples): #Iterate through the genes of the children. 
             if np.random.rand(1) < cross_percent:
-                #Store the genes 
-                temp1 = np.copy(children[j][0]) #Temporarily store child one's gene
-                temp2 = np.copy(children[j][1])       
-                #Child one gene swap and chromosome repair
-                gene_loc_1 = np.argwhere(children[:,0]==temp2).flatten()[0] #Find the location of the gene to be swapped
-                gene_loc_2 = np.argwhere(children[:,1]==temp1).flatten()[0]               
-                children[gene_loc_1][0] = np.copy(temp1)
-                children[j][0] = np.copy(temp2)
-                children[gene_loc_2][1] = np.copy(temp2)
-                children[j][1] = np.copy(temp1)
+                crossover_values.append(j)
+        # array of the order of the values of the first parent
+        if len(crossover_values) != 0:
+            child1 = children[:,0]
+            child2 = children[:,1]
+            indices1 = np.sort([np.where(child1==cv)[0][0] for cv in crossover_values])
+            indices2 = np.sort([np.where(child2==cv)[0][0] for cv in crossover_values])
+            temp1 = np.copy(child1)
+            temp2 = np.copy(child2)
+            child1[indices1] = np.copy(temp2[indices2])
+            child2[indices2] = np.copy(temp1[indices1])
         #Mutation (Uniform)
         for chil in range(2):
             for j in range(num_temples): #Iterate through the genes of the children. 
@@ -88,8 +90,6 @@ for gen in range(num_gen):
                     if j > gene_loc_mutate:
                         child = np.delete(updated_child,gene_loc_mutate)
                     else:
-                        if gene_loc_mutate == 71:
-                            hi = 0
                         child = np.delete(updated_child,gene_loc_mutate+1)
                     children[:,chil] = np.copy(child)
         #Store Children into new generation
@@ -103,6 +103,10 @@ for gen in range(num_gen):
     old_gen = np.copy(current_gen[:,winners])
     prev_fit = np.copy(np.array(current_gen_fit)[winners])    
     print(gen) 
+    if gen%5 == 0:
+        I = np.argmin(current_gen_fit)
+        print(current_gen[:,I])
+        print(current_gen_fit[I])
 final_gen = old_gen
 final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones)
 I = np.argmin(final_fit)
