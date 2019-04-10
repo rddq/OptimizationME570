@@ -9,6 +9,24 @@ from fitness_all import fitnessOfPath
 import random
 from scipy.stats import truncnorm
 from matplotlib import pyplot as plt
+from pyDOE import lhs
+
+def makeDOE(number_of_samples=100):
+    DOE = lhs(6, samples=number_of_samples)
+    def setlimits(column,lb,ub):
+        column = column*(ub-lb)+lb
+        return column
+
+    DOE[:,0] = setlimits(DOE[:,0],0.005,0.1) # cross percent
+    DOE[:,1] = setlimits(DOE[:,1],0.005,0.1) # ordered cross percent
+    DOE[:,2] = setlimits(DOE[:,2],0.005,0.1) # mutation percent
+    DOE[:,3] = setlimits(DOE[:,3],10,300) # num gen
+    DOE[:,3] = np.round(DOE[:,3])
+    DOE[:,4] = setlimits(DOE[:,4],10,300) # gen size
+    DOE[:,4] = np.round(DOE[:,4])
+    DOE[:,5] = setlimits(DOE[:,5],0.6,0.99) # tourney keep
+    theDoe = pd.DataFrame(data=DOE,columns=["CrossPercent","OrderedCrossPercent,","MutationPercent","NumGen","GenSize","TourneyKeep"])
+    theDoe.to_csv("overnight.csv")
 
 def fitness(generation,sessions,travel_time,daysotw,timezones,dictionary):
     m = np.size(generation,1)
@@ -43,10 +61,10 @@ daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sun
 
 # Optimization Variables
 cross_percent_ordered = .05
-corss_percent_swap = 0.05
+cross_percent_swap = 0.05
 mutat_percent = .01 #Mutation percentage 
-num_gen = 100
-gen_size = 100
+num_gen = 500
+gen_size = 500
 tourneykeep = 0.75
 
 tourny_size = 2
@@ -86,6 +104,19 @@ for gen in range(num_gen):
                 parents[j]= np.copy(tourny_participants[arg])    
         children[:,0] = np.copy(old_gen[:,np.copy(int(parents[0]))])
         children[:,1] = np.copy(old_gen[:,np.copy(int(parents[1]))])    
+        #Crossover (Uniform) (With chromosome repair)
+        for j in range(num_temples): #Iterate through the genes of the children. 
+            if np.random.rand(1) < cross_percent_swap:
+                #Store the genes 
+                temp1 = np.copy(children[j][0]) #Temporarily store child one's gene
+                temp2 = np.copy(children[j][1])       
+                #Child one gene swap and chromosome repair
+                gene_loc_1 = np.argwhere(children[:,0]==temp2).flatten()[0] #Find the location of the gene to be swapped
+                gene_loc_2 = np.argwhere(children[:,1]==temp1).flatten()[0]               
+                children[gene_loc_1][0] = np.copy(temp1)
+                children[j][0] = np.copy(temp2)
+                children[gene_loc_2][1] = np.copy(temp2)
+                children[j][1] = np.copy(temp1)
         #Ordered Crossover
         crossover_values = []
         for j in range(num_temples): #Iterate through the genes of the children. 
