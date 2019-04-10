@@ -142,9 +142,7 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
         print(gen)
     final_gen = old_gen
     final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
-    I = np.argmin(final_fit)
-    
-    
+    I = np.argmin(final_fit)   
     fit_opt = final_fit[I]
     xopt = final_gen[:,I]+1
     endtime = time.time()
