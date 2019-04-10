@@ -65,7 +65,9 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
                 else:
                     parents[j]= np.copy(tourny_participants[arg])    
             children[:,0] = np.copy(old_gen[:,np.copy(int(parents[0]))])
-            children[:,1] = np.copy(old_gen[:,np.copy(int(parents[1]))])    
+            children[:,1] = np.copy(old_gen[:,np.copy(int(parents[1]))])
+            if children[:,0] == children[:,1]:
+                children[:,1] = np.random.permutation(num_temples)  
             #Crossover (Uniform) (With chromosome repair)
             for j in range(num_temples): #Iterate through the genes of the children. 
                 if np.random.rand(1) < cross_percent_swap:
