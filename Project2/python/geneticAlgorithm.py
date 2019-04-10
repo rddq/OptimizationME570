@@ -8,6 +8,7 @@ import pandas as pd
 from fitness_all import fitnessOfPath
 import random
 from scipy.stats import truncnorm
+from matplotlib import pyplot as plt
 
 def fitness(generation,sessions,travel_time,daysotw,timezones,dictionary):
     m = np.size(generation,1)
@@ -41,11 +42,13 @@ travel_time = np.delete(travel_time,0,1)
 daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
 
 # Optimization Variables
-cross_percent = .2
-mutat_percent = .07 #Mutation percentage 
-num_gen = 2000
-gen_size = 30
-tourny_size = int(gen_size/3)
+cross_percent = .05
+mutat_percent = .05 #Mutation percentage 
+num_gen = 300
+gen_size = 8
+tourneykeep = 0.75
+#tourny_size = int(gen_size/3)
+tourny_size = 2
 
 num_temples = len(timezones)
 old_gen = np.zeros((num_temples,gen_size))
@@ -55,13 +58,16 @@ children = np.zeros((num_temples,2))
 generation = np.array([52,48,36,39,62,50,23,69,68,1,34,59,25,16,5,46,21,14,3,41,49,35,24,8,47,15,33,27,18,12,65,42,29,72,66,6,20,17,71,53,40,19,45,28,58,9,44,10,31,67,4,56,26,70,7,38,63,13,61,2,51,37,55,57,22,32,43,60,54,30,64,11])
 col = np.subtract(generation,1)
 for i in range(gen_size):
-    #col = np.random.permutation(num_temples)
+    col = np.random.permutation(num_temples)
     old_gen[:,i] = np.transpose(col)
 initial_gen = old_gen
 dictionary = {}
 initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
 prev_fit = np.array(initial_fit)
 # Generation For Loop
+start = time.time()
+fitness_history = []
+best_history = []
 for gen in range(num_gen):
     # Child Generation For loop
     old_fit = prev_fit.tolist()
@@ -73,7 +79,11 @@ for gen in range(num_gen):
             # Select Parents (By fitness) (Tournament Style) 
             tourny_participants = random.sample(list(range(gen_size)), tourny_size)
             arg = np.argmin(np.array(old_fit)[tourny_participants])
-            parents[j]= np.copy(tourny_participants[arg])    
+            if(np.random.rand(1)>tourneykeep):
+                del tourny_participants[arg]
+                parents[j] = np.copy(tourny_participants[0])
+            else:
+                parents[j]= np.copy(tourny_participants[arg])    
         children[:,0] = np.copy(old_gen[:,np.copy(int(parents[0]))])
         children[:,1] = np.copy(old_gen[:,np.copy(int(parents[1]))])    
         #Ordered Crossover
@@ -107,7 +117,7 @@ for gen in range(num_gen):
                     else:
                         child = np.delete(updated_child,gene_loc_mutate+1)
                     children[:,chil] = np.copy(child)
-        #Store Children into new generation
+        #Store Children into new generation       
         new_gen[:,2*(i+1)-2] = np.copy(children[:,0])
         new_gen[:,2*(i+1)-1] = np.copy(children[:,1])
     #Elitism (Pick top N)
@@ -116,16 +126,21 @@ for gen in range(num_gen):
     current_gen_fit = old_fit+new_fit
     winners = np.array(current_gen_fit).argsort()[:gen_size]
     old_gen = np.copy(current_gen[:,winners])
-    prev_fit = np.copy(np.array(current_gen_fit)[winners])    
-    print(gen) 
-    # if gen%5 == 0:
-    #     I = np.argmin(current_gen_fit)
-    #     print(current_gen[:,I])
-    #     print(current_gen_fit[I])
+    prev_fit = np.copy(np.array(current_gen_fit)[winners])     
+    I = np.argmin(current_gen_fit)
+    fitness_history.append(current_gen_fit[I])
+    best_history.append(current_gen[:,I])
+    # if gen%20 == 0:
+    print(gen)
 final_gen = old_gen
 final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
 I = np.argmin(final_fit)
 fit_opt = final_fit[I]
 xopt = final_gen[:,I]+1
+endtime = time.time()
+print(endtime-start)
 print([float(x) for x in xopt])
 print(fit_opt)
+
+plt.plot(list(range(gen+1)),fitness_history)
+plt.show()
