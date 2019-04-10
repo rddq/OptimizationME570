@@ -42,14 +42,14 @@ travel_time = np.delete(travel_time,0,1)
 daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
 
 # Optimization Variables
-cross_percent = .05
-mutat_percent = .05 #Mutation percentage 
-num_gen = 300
-gen_size = 8
+cross_percent_ordered = .05
+corss_percent_swap = 0.05
+mutat_percent = .01 #Mutation percentage 
+num_gen = 100
+gen_size = 100
 tourneykeep = 0.75
-#tourny_size = int(gen_size/3)
-tourny_size = 2
 
+tourny_size = 2
 num_temples = len(timezones)
 old_gen = np.zeros((num_temples,gen_size))
 parents = np.zeros((2,))
@@ -89,7 +89,7 @@ for gen in range(num_gen):
         #Ordered Crossover
         crossover_values = []
         for j in range(num_temples): #Iterate through the genes of the children. 
-            if np.random.rand(1) < cross_percent:
+            if np.random.rand(1) < cross_percent_ordered:
                 crossover_values.append(j)
         # array of the order of the values of the first parent
         if len(crossover_values) != 0:
@@ -100,7 +100,7 @@ for gen in range(num_gen):
             temp1 = np.copy(child1)
             temp2 = np.copy(child2)
             child1[indices1] = np.copy(temp2[indices2])
-            child2[indices2] = np.copy(temp1[indices1])
+            child2[indices2] = np.copy(temp1[indices1])       
         #Mutation (Uniform)
         for chil in range(2):
             for j in range(num_temples): #Iterate through the genes of the children. 
