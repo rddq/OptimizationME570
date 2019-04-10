@@ -5,7 +5,7 @@ import time
 import numpy as np
 import json
 import pandas as pd
-from fitness_all import fitnessOfPathTS
+from fitness_all import fitnessOfPath
 import random
 from scipy.stats import truncnorm
 from matplotlib import pyplot as plt
@@ -21,7 +21,7 @@ def fitness(generation,sessions,travel_time,daysotw,timezones,dictionary):
         if listpath in dictionary:
             fitness_path = dictionary[listpath]
         else:
-            fitness_path = fitnessOfPathTS(path,sessions,travel_time,daysotw,timezones)
+            fitness_path = fitnessOfPath(path,sessions,travel_time,daysotw,timezones)
             dictionary[listpath] = fitness_path
         total_time.append(fitness_path)  
     return total_time
@@ -125,12 +125,13 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
         fitness_history.append(fit_now)
         best_history.append(current_gen[:,I].tolist())
         # Check if the GA is stuck
+        print(gen)
         if fit_now < prev_fit_one_behind:
             prev_fit_one_behind = fit_now
             end_timer = 0
         else:
             if end_timer > 200:
-                break
+                ent_timer = 0
             else:
                 end_timer += 1 
     final_gen = old_gen
@@ -207,29 +208,30 @@ def execute(csv_name=None):
     travel_time = travel_time.values
     travel_time = np.delete(travel_time,0,1)
     daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
-    runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name)
+    runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name)
 
 def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name=None):
-    cross_percent_ordered = 0.03
-    cross_percent_swap = 0.03
-    mutat_percent = 0.03
-    num_gen = 1300
+    cross_percent_ordered = 0.07
+    cross_percent_swap = 0.01
+    mutat_percent = 0.01
+    num_gen = 1500
     gen_size = 100
-    tourneykeep = 0.75
+    tourneykeep = 0.90
     dictionary = {}
     all_history = []
     all_fitness = []
     all_times = []
+    all_iterations = []
     xopts = []
     fopts = []
-    runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name)
+    runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts,all_iterations)
     print(fopts[0])
     print(xopts[0])
-    # plt.plot(list(range(num_gen)),all_fitness[0])
-    # plt.show()
+    plt.plot(list(range(num_gen)),all_fitness[0])
+    plt.show()
 
 if __name__ == "__main__":
     starttime = time.time()
-    execute("TSparameterSweep")
+    execute("test")
     endtime = time.time()
     print(endtime-starttime)
