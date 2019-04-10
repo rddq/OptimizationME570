@@ -11,7 +11,7 @@ def makeDOE(csv_name, number_of_samples=1000):
     DOE[:,0] = setlimits(DOE[:,0],0.00005,0.1) # cross percent
     DOE[:,1] = setlimits(DOE[:,1],0.00005,0.1) # ordered cross percent
     DOE[:,2] = setlimits(DOE[:,2],0.00005,0.1) # mutation percent
-    DOE = np.insert(DOE, 3, 1000, axis=1) # num gen
+    DOE = np.insert(DOE, 3, 1500, axis=1) # num gen
     DOE = np.insert(DOE, 4, 100, axis=1) # gen size
     # DOE[:,3] = setlimits(DOE[:,3],1000,1000) # num gen
     # DOE[:,3] = np.round(DOE[:,3])
