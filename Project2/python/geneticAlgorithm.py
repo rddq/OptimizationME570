@@ -9,24 +9,6 @@ from fitness_all import fitnessOfPathTS
 import random
 from scipy.stats import truncnorm
 from matplotlib import pyplot as plt
-from pyDOE import lhs
-
-def makeDOE(csv_name, number_of_samples=1000):
-    DOE = lhs(6, samples=number_of_samples)
-    def setlimits(column,lb,ub):
-        column = column*(ub-lb)+lb
-        return column
-
-    DOE[:,0] = setlimits(DOE[:,0],0.005,0.1) # cross percent
-    DOE[:,1] = setlimits(DOE[:,1],0.005,0.1) # ordered cross percent
-    DOE[:,2] = setlimits(DOE[:,2],0.005,0.1) # mutation percent
-    DOE[:,3] = setlimits(DOE[:,3],50,1000) # num gen
-    DOE[:,3] = np.round(DOE[:,3])
-    DOE[:,4] = setlimits(DOE[:,4],1,125) # gen size
-    DOE[:,4] = np.round(DOE[:,4])
-    DOE[:,5] = setlimits(DOE[:,5],0.6,0.99) # tourney keep
-    theDoe = pd.DataFrame(data=DOE,columns=["CrossPercent","OrderedCrossPercent","MutationPercent","NumGen","GenSize","TourneyKeep"])
-    theDoe.to_csv(csv_name+".csv")
 
 def fitness(generation,sessions,travel_time,daysotw,timezones,dictionary):
     m = np.size(generation,1)
@@ -44,7 +26,7 @@ def fitness(generation,sessions,travel_time,daysotw,timezones,dictionary):
         total_time.append(fitness_path)  
     return total_time
 
-def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts):
+def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts,all_iterations):
     start = time.time()
     tourny_size = 2
     num_temples = len(timezones)
@@ -53,10 +35,10 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
     parents = np.zeros((2,))
     children = np.zeros((num_temples,2))
     # Generate 1st Generation (Random)
-    #generation = np.array([52,48,36,39,62,50,23,69,68,1,34,59,25,16,5,46,21,14,3,41,49,35,24,8,47,15,33,27,18,12,65,42,29,72,66,6,20,17,71,53,40,19,45,28,58,9,44,10,31,67,4,56,26,70,7,38,63,13,61,2,51,37,55,57,22,32,43,60,54,30,64,11])
+    #generation = np.array([36.0, 39.0, 50.0, 23.0, 69.0, 68.0, 62.0, 1.0, 34.0, 59.0, 25.0, 16.0, 41.0, 5.0, 3.0, 46.0, 21.0, 14.0, 49.0, 35.0, 24.0, 8.0, 47.0, 18.0, 15.0, 33.0, 27.0, 12.0, 42.0, 65.0, 29.0, 72.0, 66.0, 6.0, 4.0, 20.0, 17.0, 71.0, 53.0, 52.0, 48.0, 40.0, 19.0, 28.0, 45.0, 58.0, 9.0, 44.0, 10.0, 31.0, 67.0, 56.0, 26.0, 70.0, 7.0, 38.0, 13.0, 63.0, 2.0, 61.0, 51.0, 37.0, 55.0, 57.0, 22.0, 32.0, 43.0, 60.0, 54.0, 30.0, 64.0, 11.0])
     #col = np.subtract(generation,1)
     for i in range(gen_size):
-        col = np.random.permutation(num_temples)
+        #col = np.random.permutation(num_temples)
         old_gen[:,i] = np.transpose(col)
     initial_gen = old_gen
     initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
@@ -64,6 +46,8 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
     # Generation For Loop
     fitness_history = []
     best_history = []
+    prev_fit_one_behind = 20000000000000000
+    end_timer = 0
     for gen in range(num_gen):
         # Child Generation For loop
         old_fit = prev_fit.tolist()
@@ -137,8 +121,18 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
         old_gen = np.copy(current_gen[:,winners])
         prev_fit = np.copy(np.array(current_gen_fit)[winners])     
         I = np.argmin(current_gen_fit)
-        fitness_history.append(current_gen_fit[I])
+        fit_now = current_gen_fit[I]
+        fitness_history.append(fit_now)
         best_history.append(current_gen[:,I].tolist())
+        # Check if the GA is stuck
+        if fit_now < prev_fit_one_behind:
+            prev_fit_one_behind = fit_now
+            end_timer = 0
+        else:
+            if end_timer > 200:
+                break
+            else:
+                end_timer += 1 
         print(gen)
     final_gen = old_gen
     final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
@@ -146,6 +140,7 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
     fit_opt = final_fit[I]
     xopt = final_gen[:,I]+1
     endtime = time.time()
+    all_iterations.append(gen)
     all_history.append(best_history)
     all_fitness.append(fitness_history)
     all_times.append(endtime-start)
@@ -160,6 +155,7 @@ def runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name):
     all_times = []
     xopts = []
     fopts = []
+    all_iterations = []
     for i in list(range(expts.shape[0])):
         dictionary = {}
         cross_percent_ordered = expts["OrderedCrossPercent"][i]
@@ -168,7 +164,7 @@ def runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name):
         num_gen = int(expts["NumGen"][i])
         gen_size = int(expts["GenSize"][i])
         tourneykeep = expts["TourneyKeep"][i]
-        runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts)
+        runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts,all_iterations)
         if i%5 == 1:
             with open('results/'+ csv_name +'history.json', 'w') as outfile:
                 json.dump(all_history, outfile)
@@ -180,6 +176,8 @@ def runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name):
                 json.dump(fopts, outfile)
             with open('results/'+ csv_name +'xopt.json', 'w') as outfile:
                 json.dump(xopts, outfile)
+            with open('results/'+ csv_name +'iterations.json', 'w') as outfile:
+                json.dump(all_iterations, outfile)
         print(i)
     with open('results/'+ csv_name +'history.json', 'w') as outfile:
         json.dump(all_history, outfile)
@@ -191,6 +189,8 @@ def runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name):
         json.dump(fopts, outfile)
     with open('results/'+ csv_name +'xopt.json', 'w') as outfile:
         json.dump(xopts, outfile)
+    with open('results/'+ csv_name +'iterations.json', 'w') as outfile:
+        json.dump(all_iterations, outfile)
 
 def execute(csv_name=None):
     sessionFileName = 'TempleSchedules/templeEndowmentSchedules.json'
@@ -207,13 +207,13 @@ def execute(csv_name=None):
     travel_time = travel_time.values
     travel_time = np.delete(travel_time,0,1)
     daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
-    runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name)
+    runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name)
 
 def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name=None):
     cross_percent_ordered = 0.03
     cross_percent_swap = 0.03
     mutat_percent = 0.03
-    num_gen = 1500
+    num_gen = 1300
     gen_size = 100
     tourneykeep = 0.75
     dictionary = {}
@@ -222,14 +222,14 @@ def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name=None):
     all_times = []
     xopts = []
     fopts = []
-    runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts)
+    runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name)
     print(fopts[0])
     print(xopts[0])
-    plt.plot(list(range(num_gen)),all_fitness[0])
-    plt.show()
+    # plt.plot(list(range(num_gen)),all_fitness[0])
+    # plt.show()
 
 if __name__ == "__main__":
     starttime = time.time()
-    execute()
+    execute("TSparameterSweep")
     endtime = time.time()
     print(endtime-starttime)
