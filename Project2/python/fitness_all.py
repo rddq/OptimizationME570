@@ -28,6 +28,12 @@ def getSessionDateTime(session, templeIndex, date, extradays, timezones):
     sesTime = timezones[templeIndex].localize(datetime(Year,Month,Day,Hour,Minute,0,0))
     return sesTime
 
+def fitnessOfPathTS(path, sessions, travel_time, daysotw, timezones):
+    fitness = 0
+    for j in range(0,len(path)):
+        fitness += travel_time[path[j-1]][path[j]]
+    return fitness
+
 def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
     timezone_start = timezones[0]
     startDate = timezone_start.localize(datetime(2019,4,16,7,40,0,0))
