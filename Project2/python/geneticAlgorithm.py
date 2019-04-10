@@ -41,10 +41,10 @@ travel_time = np.delete(travel_time,0,1)
 daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
 
 # Optimization Variables
-cross_percent = .2 
-mutat_percent = .2 #Mutation percentage 
-num_gen = 20
-gen_size = 20
+cross_percent = .2
+mutat_percent = .07 #Mutation percentage 
+num_gen = 2000
+gen_size = 30
 tourny_size = int(gen_size/3)
 
 num_temples = len(timezones)
