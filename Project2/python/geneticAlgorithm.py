@@ -35,10 +35,10 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
     parents = np.zeros((2,))
     children = np.zeros((num_temples,2))
     # Generate 1st Generation (Random)
-    #generation = np.array([36.0, 39.0, 50.0, 23.0, 69.0, 68.0, 62.0, 1.0, 34.0, 59.0, 25.0, 16.0, 41.0, 5.0, 3.0, 46.0, 21.0, 14.0, 49.0, 35.0, 24.0, 8.0, 47.0, 18.0, 15.0, 33.0, 27.0, 12.0, 42.0, 65.0, 29.0, 72.0, 66.0, 6.0, 4.0, 20.0, 17.0, 71.0, 53.0, 52.0, 48.0, 40.0, 19.0, 28.0, 45.0, 58.0, 9.0, 44.0, 10.0, 31.0, 67.0, 56.0, 26.0, 70.0, 7.0, 38.0, 13.0, 63.0, 2.0, 61.0, 51.0, 37.0, 55.0, 57.0, 22.0, 32.0, 43.0, 60.0, 54.0, 30.0, 64.0, 11.0])
-    #col = np.subtract(generation,1)
+    generation = np.array([36.0, 39.0, 50.0, 23.0, 69.0, 68.0, 62.0, 1.0, 34.0, 59.0, 25.0, 16.0, 41.0, 5.0, 3.0, 46.0, 21.0, 14.0, 49.0, 35.0, 24.0, 8.0, 47.0, 18.0, 15.0, 33.0, 27.0, 12.0, 42.0, 65.0, 29.0, 72.0, 66.0, 6.0, 4.0, 20.0, 17.0, 71.0, 53.0, 52.0, 48.0, 40.0, 19.0, 28.0, 45.0, 58.0, 9.0, 44.0, 10.0, 31.0, 67.0, 56.0, 26.0, 70.0, 7.0, 38.0, 13.0, 63.0, 2.0, 61.0, 51.0, 37.0, 55.0, 57.0, 22.0, 32.0, 43.0, 60.0, 54.0, 30.0, 64.0, 11.0])
+    col = np.subtract(generation,1)
     for i in range(gen_size):
-        col = np.random.permutation(num_temples)
+        #col = np.random.permutation(num_temples)
         old_gen[:,i] = np.transpose(col)
     initial_gen = old_gen
     initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
@@ -126,14 +126,15 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
         best_history.append(current_gen[:,I].tolist())
         # Check if the GA is stuck
         print(gen)
-        if fit_now < prev_fit_one_behind:
-            prev_fit_one_behind = fit_now
-            end_timer = 0
-        else:
-            if end_timer > 200:
-                ent_timer = 0
-            else:
-                end_timer += 1 
+        # if fit_now < prev_fit_one_behind:
+        #     prev_fit_one_behind = fit_now
+        #     end_timer = 0
+        # else:
+        #     if end_timer > 200:
+        #         end_timer = 0
+
+        #     else:
+        #         end_timer += 1 
     final_gen = old_gen
     final_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
     I = np.argmin(final_fit)   
@@ -167,19 +168,11 @@ def runAllExperiments(sessions,travel_time,daysotw,timezones,csv_name):
         tourneykeep = expts["TourneyKeep"][i]
         runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts,all_iterations)
         if i%5 == 1:
-            with open('results/'+ csv_name +'history.json', 'w') as outfile:
-                json.dump(all_history, outfile)
-            with open('results/'+ csv_name +'fitness.json', 'w') as outfile:
-                json.dump(all_fitness, outfile)
-            with open('results/'+ csv_name +'time.json', 'w') as outfile:
-                json.dump(all_times, outfile)
-            with open('results/'+ csv_name +'fopt.json', 'w') as outfile:
-                json.dump(fopts, outfile)
-            with open('results/'+ csv_name +'xopt.json', 'w') as outfile:
-                json.dump(xopts, outfile)
-            with open('results/'+ csv_name +'iterations.json', 'w') as outfile:
-                json.dump(all_iterations, outfile)
+            save_parameters(csv_name,all_history,all_fitness,all_times,fopts,xopts,all_iterations)
         print(i)
+    save_parameters(csv_name,all_history,all_fitness,all_times,fopts,xopts,all_iterations)
+
+def save_parameters(csv_name,all_history,all_fitness,all_times,fopts,xopts,all_iterations):
     with open('results/'+ csv_name +'history.json', 'w') as outfile:
         json.dump(all_history, outfile)
     with open('results/'+ csv_name +'fitness.json', 'w') as outfile:
@@ -210,13 +203,13 @@ def execute(csv_name=None):
     daysotw = ["Monday", "Tuesday", "Wednesday", "Thursday","Friday","Saturday","Sunday"]
     runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name)
 
-def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name=None):
-    cross_percent_ordered = 0.07
-    cross_percent_swap = 0.01
-    mutat_percent = 0.01
+def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name):
+    cross_percent_ordered = 0.09
+    cross_percent_swap = 0.03
+    mutat_percent = 0.03
     num_gen = 1500
     gen_size = 100
-    tourneykeep = 0.90
+    tourneykeep = 0.85
     dictionary = {}
     all_history = []
     all_fitness = []
@@ -227,11 +220,12 @@ def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name=None):
     runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen,gen_size,tourneykeep,dictionary,sessions,travel_time,daysotw,timezones,all_history,all_fitness,all_times,xopts,fopts,all_iterations)
     print(fopts[0])
     print(xopts[0])
+    save_parameters(csv_name, all_history, all_fitness, all_times, fopts, xopts, all_iterations)
     plt.plot(list(range(num_gen)),all_fitness[0])
     plt.show()
 
 if __name__ == "__main__":
     starttime = time.time()
-    execute("test")
+    execute("testNoOptimal")
     endtime = time.time()
     print(endtime-starttime)
