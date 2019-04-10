@@ -6,17 +6,6 @@ import numpy as np
 import json
 import pandas as pd 
 
-def fitness(generation,sessions,travel_time,daysotw,timezones):
-    m = np.size(generation,1)
-    total_time = []
-    for i in range(m):
-        gen_time = 0
-        path = generation.astype(int)
-        path = path[:,i]
-        fitness_path = fitnessOfPath(path,sessions,travel_time,daysotw,timezones)
-        total_time.append(fitness_path)  
-    return total_time
-
 def getSessionDateTime(session, templeIndex, date, extradays, timezones):
     info = session.split()
     time = info[0].split(":")
@@ -84,7 +73,6 @@ def fitnessOfPath(path, sessions, travel_time, daysotw, timezones):
                 continue
             # Go to first session of the next day
             tsess = getSessionDateTime(schedule[0], j, date, extraday, timezones)
-            # TODO include date in this calculation
             difference = tsess-date
             minutesDiffdaysmin = difference.days*24*60
             minutesDiffsecondmin = difference.seconds/60
@@ -117,7 +105,8 @@ if __name__ == "__main__":
     generation = np.array([52,48,36,39,62,50,23,69,68,1,34,59,25,16,5,46,21,14,3,41,49,35,24,8,47,15,33,27,18,12,65,42,29,0,66,6,20,17,71,53,40,19,45,28,58,9,44,10,31,67,4,56,26,70,7,38,63,13,61,2,51,37,55,57,22,32,43,60,54,30,64,11])
     generation = np.reshape(generation, (72,1))
     generation = np.subtract(generation,1)
-    total_seconds = fitness(generation, sessions, travel_time, daysotw, timezones)
+    dictionary = {}
+    total_seconds = fitness(generation, sessions, travel_time, daysotw, timezones,dictionary)
     print(total_seconds[0])
     end_time = time.time()
     print (end_time-start_time)

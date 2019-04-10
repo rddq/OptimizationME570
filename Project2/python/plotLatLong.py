@@ -8,6 +8,8 @@ def plotlatlong(matlab_ind):
     columns = ["temple name", "location","index","lat","long" ]
     temples = pd.read_csv(filename, delimiter='\t', names=columns)
 
+    matlab_ind = np.subtract(np.array(matlab_ind),1).astype(int)
+
     lat_coords = temples.values[:,3]
     long_coords = temples.values[:,4] # long is negative in the US
 
@@ -27,6 +29,5 @@ def plotlatlong(matlab_ind):
     
 if __name__ == "__main__":
     matlab_ind = [52,48,36,39,62,50,23,69,68,1,34,59,25,16,5,46,21,14,3,41,49,35,24,8,47,15,33,27,18,12,65,42,29,0,66,6,20,17,71,53,40,19,45,28,58,9,44,10,31,67,4,56,26,70,7,38,63,13,61,2,51,37,55,57,22,32,43,60,54,30,64,11,52]
-    matlab_ind = np.subtract(np.array(matlab_ind),1).astype(int)
     newpath = [52.0, 48.0, 36.0, 62.0, 10.0, 43.0, 50.0, 23.0, 69.0, 68.0, 39.0, 71.0, 1.0, 34.0, 59.0, 16.0, 25.0, 46.0, 21.0, 14.0, 3.0, 41.0, 24.0, 8.0, 12.0, 49.0, 35.0, 47.0, 15.0, 27.0, 18.0, 33.0, 5.0, 65.0, 29.0, 42.0, 72.0, 66.0, 6.0, 20.0, 17.0, 53.0, 40.0, 19.0, 45.0, 58.0, 28.0, 70.0, 44.0, 9.0, 31.0, 67.0, 4.0, 56.0, 26.0, 7.0, 38.0, 63.0, 13.0, 61.0, 2.0, 51.0, 37.0, 55.0, 57.0, 22.0, 32.0, 60.0, 54.0, 30.0, 64.0, 11.0]
     plotlatlong(newpath)
