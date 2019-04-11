@@ -5,7 +5,7 @@ import time
 import numpy as np
 import json
 import pandas as pd
-from fitness_all import fitnessOfPathTS
+from fitness_all import fitnessOfPath
 import random
 from scipy.stats import truncnorm
 from matplotlib import pyplot as plt
@@ -21,7 +21,7 @@ def fitness(generation,sessions,travel_time,daysotw,timezones,dictionary):
         if listpath in dictionary:
             fitness_path = dictionary[listpath]
         else:
-            fitness_path = fitnessOfPathTS(path,sessions,travel_time,daysotw,timezones)
+            fitness_path = fitnessOfPath(path,sessions,travel_time,daysotw,timezones)
             dictionary[listpath] = fitness_path
         total_time.append(fitness_path)  
     return total_time
@@ -35,10 +35,10 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
     parents = np.zeros((2,))
     children = np.zeros((num_temples,2))
     # Generate 1st Generation (Random)
-    #generation = np.array([36.0, 39.0, 50.0, 23.0, 69.0, 68.0, 62.0, 1.0, 34.0, 59.0, 25.0, 16.0, 41.0, 5.0, 3.0, 46.0, 21.0, 14.0, 49.0, 35.0, 24.0, 8.0, 47.0, 18.0, 15.0, 33.0, 27.0, 12.0, 42.0, 65.0, 29.0, 72.0, 66.0, 6.0, 4.0, 20.0, 17.0, 71.0, 53.0, 52.0, 48.0, 40.0, 19.0, 28.0, 45.0, 58.0, 9.0, 44.0, 10.0, 31.0, 67.0, 56.0, 26.0, 70.0, 7.0, 38.0, 13.0, 63.0, 2.0, 61.0, 51.0, 37.0, 55.0, 57.0, 22.0, 32.0, 43.0, 60.0, 54.0, 30.0, 64.0, 11.0])
-    #col = np.subtract(generation,1)
+    generation = np.array([36.0, 39.0, 50.0, 23.0, 69.0, 68.0, 62.0, 1.0, 34.0, 59.0, 25.0, 16.0, 41.0, 5.0, 3.0, 46.0, 21.0, 14.0, 49.0, 35.0, 24.0, 8.0, 47.0, 18.0, 15.0, 33.0, 27.0, 12.0, 42.0, 65.0, 29.0, 72.0, 66.0, 6.0, 4.0, 20.0, 17.0, 71.0, 53.0, 52.0, 48.0, 40.0, 19.0, 28.0, 45.0, 58.0, 9.0, 44.0, 10.0, 31.0, 67.0, 56.0, 26.0, 70.0, 7.0, 38.0, 13.0, 63.0, 2.0, 61.0, 51.0, 37.0, 55.0, 57.0, 22.0, 32.0, 43.0, 60.0, 54.0, 30.0, 64.0, 11.0])
+    col = np.subtract(generation,1)
     for i in range(gen_size):
-        col = np.random.permutation(num_temples)
+        #col = np.random.permutati on(num_temples)
         old_gen[:,i] = np.transpose(col)
     initial_gen = old_gen
     initial_fit = fitness(old_gen, sessions, travel_time, daysotw, timezones, dictionary)
@@ -206,11 +206,11 @@ def execute(csv_name=None):
     runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name)
 
 def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name):
-    cross_percent_ordered = 0.07
-    cross_percent_swap = 0.01
-    mutat_percent = 0.01
-    num_gen = 3000
-    gen_size = 100
+    cross_percent_ordered = 0.3
+    cross_percent_swap = 0.03
+    mutat_percent = 0.03
+    num_gen = 1500
+    gen_size = 20
     tourneykeep = 0.85
     dictionary = {}
     all_history = []
@@ -228,6 +228,6 @@ def runOneExperiment(sessions,travel_time,daysotw,timezones,csv_name):
 
 if __name__ == "__main__":
     starttime = time.time()
-    execute("testNoOptimalTS2")
+    execute("Endowment5")
     endtime = time.time()
     print(endtime-starttime)
