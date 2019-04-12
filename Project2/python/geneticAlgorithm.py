@@ -67,6 +67,7 @@ def runExperiment(cross_percent_ordered,cross_percent_swap,mutat_percent,num_gen
                     children[:,1] = np.random.permutation(num_temples)  
             #Crossover (Uniform) (With chromosome repair)
             for j in range(num_temples): #Iterate through the genes of the children. 
+                # TODO preallocate random numbers in the beginning 
                 if np.random.rand(1) < cross_percent_swap:
                     #Store the genes 
                     temp1 = np.copy(children[j][0]) #Temporarily store child one's gene

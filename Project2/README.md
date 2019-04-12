@@ -2,7 +2,7 @@
 
 This project for ME 575 at BYU involved making a genetic algorithm that would solve a type of traveling salesman problem with schedules.
 It is attending an endowment session in each temple of the Church of Jesus Christ of Latter Day Saints.
-The project was originally coded up in matlab but then moved to python.
+The project was originally coded up in matlab but then moved to python to improve datetime performance.
 
 ## Data Collection
 ### Travel time between temples
