@@ -21,7 +21,7 @@ def makeDOE(csv_name, number_of_samples=1000):
     # DOE[:,4] = np.round(DOE[:,4])
     DOE[:,5] = setlimits(DOE[:,5],0.75,0.75) # tourney keep
     theDoe = pd.DataFrame(data=DOE,columns=["CrossPercent","OrderedCrossPercent","MutationPercent","NumGen","GenSize","TourneyKeep"])
-    theDoe.to_csv(csv_name+".csv")
+    theDoe.to_csv("inputs/"+csv_name+".csv")
 
 if __name__ == "__main__":
-    makeDOE("TSparameterSweep",30)
+    makeDOE("test",30)
