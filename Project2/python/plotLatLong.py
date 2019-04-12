@@ -2,14 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import pandas as pd
+import json
 
 # Note: basemap can be pretty complicated to install on windows
 def plotlatlong(matlab_ind):
     filename = 'Temple.txt'
     columns = ["temple name", "location","index","lat","long" ]
     temples = pd.read_csv(filename, delimiter='\t', names=columns)
-
-    matlab_ind = np.subtract(np.array(matlab_ind),1).astype(int)
 
     lat_coords = temples.values[:,3]
     long_coords = temples.values[:,4] # long is negative in the US
@@ -28,5 +27,23 @@ def plotlatlong(matlab_ind):
     plt.plot(x, y)
     plt.show()
     
-if __name__ == "__main__":   
-    #plotlatlong(yes)
+if __name__ == "__main__":
+    experiment_name = "pastResults/endowment2"
+    with open('results/'+ experiment_name +'history.json', 'r') as outfile:
+        all_history = json.load(outfile)
+    with open('results/'+ experiment_name +'fitness.json', 'r') as outfile:
+        all_fitness = json.load(outfile)
+    with open('results/'+ experiment_name +'time.json', 'r') as outfile:
+        all_times = json.load(outfile)
+    with open('results/'+ experiment_name +'fopt.json', 'r') as outfile:
+        fopts = json.load(outfile)
+    with open('results/'+ experiment_name +'xopt.json', 'r') as outfile:
+        xopts = json.load(outfile)
+    with open('results/'+ experiment_name +'iterations.json', 'r') as outfile:
+        all_iterations = json.load(outfile)
+    #yes = np.array(all_history[0][300]).astype(int)
+    xopts = xopts[0]
+    xopts.append(xopts[0])
+    yes = np.array(xopts).astype(int)
+    yes = np.subtract(yes,1).astype(int)
+    plotlatlong(yes)
