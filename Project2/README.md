@@ -26,9 +26,14 @@ The experiment results are in the results folder. The single run experiments wer
 The other multiple experiment runs have their parameters in the inputs folder.
 
 Fitness.json is the fitness of the best in each generation.
+
 history.json is the x values for the best fitness in each generation.
+
 time.json is the amount of time it took for the experiment to run.
-fopt.json is the best fitness in each experiment
-xopt.json is the temple ordering for the best fitness in each experiment
+
+fopt.json is the best fitness in each experiment.
+
+xopt.json is the temple ordering for the best fitness in each experiment.
 xopt has indices matching the Temple.txt file, the history.json have indices starting at 0.
+
 iterations.xopt is the number of iterations per run that it took to converge. This dynamic was removed in most experiments. 
