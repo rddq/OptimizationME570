@@ -41,9 +41,12 @@ if __name__ == "__main__":
         xopts = json.load(outfile)
     with open('results/'+ experiment_name +'iterations.json', 'r') as outfile:
         all_iterations = json.load(outfile)
-    #yes = np.array(all_history[0][300]).astype(int)
+    # Plot a run from an experiment
+    #to_plot = np.array(all_history[0][300]).astype(int)
+    
+    # Plot Optimum from an experiment
     xopts = xopts[0]
     xopts.append(xopts[0])
-    yes = np.array(xopts).astype(int)
-    yes = np.subtract(yes,1).astype(int)
-    plotlatlong(yes)
+    to_plot = np.array(xopts).astype(int)
+    to_plot = np.subtract(yes,1).astype(int)
+    plotlatlong(to_plot)

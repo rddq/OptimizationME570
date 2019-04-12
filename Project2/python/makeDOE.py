@@ -11,8 +11,10 @@ def makeDOE(csv_name, number_of_samples=1000):
     DOE[:,0] = setlimits(DOE[:,0],0.01,0.01) # cross percent
     DOE[:,1] = setlimits(DOE[:,1],0.07,0.07) # ordered cross percent
     DOE[:,2] = setlimits(DOE[:,2],0.2,0.2) # mutation percent
+    # Constant values for the number of generations and generation size, first argument of lhs should be 4
     DOE = np.insert(DOE, 3, 1500, axis=1) # num gen
     DOE = np.insert(DOE, 4, 100, axis=1) # gen size
+    # Parameter sweep for the number of generations and generation size, first argument of lhs should be 6
     # DOE[:,3] = setlimits(DOE[:,3],1000,1000) # num gen
     # DOE[:,3] = np.round(DOE[:,3])
     # DOE[:,4] = setlimits(DOE[:,4],100,100) # gen size
