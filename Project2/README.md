@@ -21,7 +21,7 @@ Packages were installed with anaconda to prevent package dependency headaches.
 Numpy, Pandas, SciPy, pytz, timezonefinder, requests, pyDOE, and Basemaps.
 Basemaps can be difficult to install especially for windows and requires additional dependencies. It is only used for map visualization.
 
-## Experiments Running
+## Experiment Results
 The experiment results are in the results folder. The single run experiments were not documented super well, only with an info.txt file in the results folder. 
 The other multiple experiment runs have their parameters in the inputs folder.
 
